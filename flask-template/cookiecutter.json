@@ -1,0 +1,11 @@
+{
+  "project_name": "MeuFlaskApp",
+  "use_db": "n",
+  "use_auth": "n",
+  "use_api_docs": "n",
+  "use_middleware": "n",
+  "use_logging": "n",
+  "setup_venv": "y",
+  "install_dependencies": "y",
+  "run_db_migrations": "n"
+}
