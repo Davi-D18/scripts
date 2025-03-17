@@ -3,11 +3,13 @@ from app.database.config import DATABASE_CONFIG
 class Config:
     """Configuração base usada por todos os ambientes."""
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    {% if cookiecutter.usar_docs_api == "s" %}
     SWAGGER = {
         'uiversion': 3,
         'specs_route': '/docs/',
         'public': False
     }
+    {% endif %}
 
 class DevelopmentConfig(Config):
     """Configurações específicas para o ambiente de desenvolvimento."""
@@ -15,7 +17,7 @@ class DevelopmentConfig(Config):
     {% if cookiecutter.usar_banco_de_dados == "s" %}
     SQLALCHEMY_DATABASE_URI = DATABASE_CONFIG["DATABASE_URI"]
     {% endif %}
-    {% if cookiecutter.usar_docs_api == s %}
+    {% if cookiecutter.usar_docs_api == "s" %}
     SWAGGER = {
         **Config.SWAGGER,  # Herda as configurações base
         'enabled': True,
@@ -24,7 +26,7 @@ class DevelopmentConfig(Config):
         'version': '1.0',
         'validatorUrl': None  # Desativa validação externa para performance
     }
-    {%endif%}
+    {% endif %}
 
 class ProductionConfig(Config):
     """Configurações específicas para o ambiente de produção."""
@@ -33,13 +35,13 @@ class ProductionConfig(Config):
     {% if cookiecutter.usar_banco_de_dados == "s" %}
     SQLALCHEMY_DATABASE_URI = DATABASE_CONFIG["DATABASE_URI"]
     {% endif %}
-    {% if cookiecutter.usar_docs_api == s %}
+    {% if cookiecutter.usar_docs_api == "s" %}
     SWAGGER = {
         **Config.SWAGGER,
         'enabled': False,  # Desativa a UI completamente
         'public': False
     }
-    {%endif%}
+    {% endif %}
 # Dicionário para mapear os ambientes
 config = {
     'development': DevelopmentConfig,

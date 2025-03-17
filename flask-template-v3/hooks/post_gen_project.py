@@ -3,12 +3,11 @@ import subprocess
 import sys
 
 
-def remove_middlewares_directory(project_dir):
-    """Remove a pasta middlewares e seu conteúdo se existir."""
-    middlewares_dir = os.path.join(project_dir, 'app', 'middlewares')
-    if os.path.exists(middlewares_dir):
-        # Remove arquivos e subdiretórios primeiro
-        for root, dirs, files in os.walk(middlewares_dir, topdown=False):
+def remove_directory(target_path):
+    """Remove o diretório e seu conteúdo, se existir."""
+    if os.path.exists(target_path) and os.path.isdir(target_path):
+        # Remove arquivos e subdiretórios (de baixo para cima)
+        for root, dirs, files in os.walk(target_path, topdown=False):
             for file in files:
                 file_path = os.path.join(root, file)
                 os.remove(file_path)
@@ -18,17 +17,40 @@ def remove_middlewares_directory(project_dir):
                 os.rmdir(dir_path)
                 print(f"Pasta removida: {dir_path}")
         # Remove a pasta principal
-        os.rmdir(middlewares_dir)
-        print(f"Pasta 'middlewares' removida: {middlewares_dir}")
+        os.rmdir(target_path)
+        print(f"Pasta '{target_path}' removida.")
 
+def remove_if_empty(path):
+    """
+    Remove o arquivo se estiver vazio ou remove o diretório se estiver vazio.
+    """
+    if os.path.exists(path):
+        if os.path.isfile(path):
+            if os.path.getsize(path) == 0:
+                os.remove(path)
+                print(f"Arquivo vazio removido: {path}")
+        elif os.path.isdir(path):
+            # Remove o diretório se estiver vazio
+            if not os.listdir(path):
+                os.rmdir(path)
+                print(f"Diretório vazio removido: {path}")
+                
 def main():
     project_dir = os.getcwd()
     venv_dir = os.path.join(project_dir, 'venv')
     
     use_middlewares = "{{ cookiecutter.usar_middlewares }}"
+    usar_docs_api = "{{ cookiecutter.usar_docs_api }}"
     
+   # Se o usuário não usar middlewares, remova o diretório app/middlewares
     if use_middlewares.lower() == 'n':
-        remove_middlewares_directory(project_dir)
+        middlewares_dir = os.path.join(project_dir, 'app', 'middlewares')
+        remove_directory(middlewares_dir)
+    
+    # Se o usuário não usar documentação da API, remova o arquivo swagger/teste.yml
+    if usar_docs_api.lower() == 'n':
+        swagger_dir = os.path.join(project_dir, 'swagger')
+        remove_directory(swagger_dir)
     
     print("Criando ambiente virtual em 'venv'...")
     subprocess.check_call([sys.executable, '-m', 'venv', venv_dir])

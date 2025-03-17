@@ -1,4 +1,4 @@
-{% if cookiecutter.usar_banco_de_dados == "s" %}
+{%- if cookiecutter.usar_banco_de_dados == "s" -%}
 from app.models.news import News
 from app.extensions import db
 
@@ -10,4 +10,4 @@ def inserir_news(title, content):
     db.session.add(news)
     db.session.commit()
     return news
-{% endif %}
+{%- endif -%}
