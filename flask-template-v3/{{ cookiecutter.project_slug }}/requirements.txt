@@ -1,0 +1,10 @@
+Flask
+Werkzeug
+Python-Dotenv
+{% if cookiecutter.usar_banco_de_dados == "s" %}
+Flask-SQLAlchemy
+Flask-Migrate
+{% endif %}
+{% if cookiecutter.usar_docs_api == s %}
+Flasgger
+{% endif %}

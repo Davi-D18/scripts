@@ -1,0 +1,14 @@
+Flask
+Werkzeug
+{% if cookiecutter.usar_banco_de_dados == "s" %}
+Flask-SQLAlchemy
+Flask-Migrate
+Python-Dotenv
+{% endif %}
+{% if cookiecutter.usar_sistema_de_login == "s" %}
+Flask-Login
+{% endif %}
+{% if cookiecutter.usar_middlewares == "s" %}
+# Exemplo: pacote para middlewares (substitua pelo pacote real desejado)
+Some-Middleware-Package
+{% endif %}

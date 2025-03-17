@@ -1,0 +1,48 @@
+Example endpoint for creating a news item
+In this example the specification is taken from external YAML file
+---
+parameters:
+  - in: body
+    name: body
+    description: Dados da notícia a ser criada
+    required: true
+    schema:
+      $ref: '#/definitions/News'
+definitions:
+  News:
+    type: object
+    required:
+      - title
+      - content
+    properties:
+      title:
+        type: string
+        example: "Novo lançamento de produto"
+      content:
+        type: string
+        example: "A empresa anunciou hoje seu novo produto revolucionário..."
+responses:
+  201:
+    description: Notícia criada com sucesso
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+        id:
+          type: integer
+    examples:
+      application/json:
+        message: "Notícia criada com sucesso"
+        id: 42
+  400:
+    description: Dados inválidos ou incompletos
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+    examples:
+      application/json:
+        error: "Título e conteúdo são obrigatórios"
+
