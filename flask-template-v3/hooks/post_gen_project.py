@@ -11,14 +11,11 @@ def remove_directory(target_path):
             for file in files:
                 file_path = os.path.join(root, file)
                 os.remove(file_path)
-                print(f"Arquivo removido: {file_path}")
             for dir in dirs:
                 dir_path = os.path.join(root, dir)
                 os.rmdir(dir_path)
-                print(f"Pasta removida: {dir_path}")
         # Remove a pasta principal
         os.rmdir(target_path)
-        print(f"Pasta '{target_path}' removida.")
 
 def remove_if_empty(path):
     """
@@ -28,12 +25,10 @@ def remove_if_empty(path):
         if os.path.isfile(path):
             if os.path.getsize(path) == 0:
                 os.remove(path)
-                print(f"Arquivo vazio removido: {path}")
         elif os.path.isdir(path):
             # Remove o diretório se estiver vazio
             if not os.listdir(path):
                 os.rmdir(path)
-                print(f"Diretório vazio removido: {path}")
                 
 def main():
     project_dir = os.getcwd()
