@@ -1,0 +1,16 @@
+Flask
+Werkzeug
+Python-Dotenv
+{% if cookiecutter.usar_flask_restful == "s" %}
+Flask-Restful
+{% endif %}
+{% if cookiecutter.usar_serializacao == "s" %}
+Marshmallow
+{% endif %}
+{% if cookiecutter.usar_banco_de_dados == "s" %}
+Flask-SQLAlchemy
+Flask-Migrate
+{% endif %}
+{% if cookiecutter.usar_docs_api == "s" %}
+Flasgger
+{% endif %}
