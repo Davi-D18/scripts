@@ -1,5 +1,3 @@
-from flask import jsonify
-
 class APISuccess:
     """Classe base para todas as mensagens de sucesso da API"""
     status_code = 200
@@ -16,7 +14,7 @@ class APISuccess:
         }
         if self.data is not None:
             response["data"] = self.data
-        return jsonify(response), self.status_code
+        return response, self.status_code
 
 # Exemplo de mensagem de sucesso específica
 class ResourceCreated(APISuccess):

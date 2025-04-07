@@ -1,4 +1,4 @@
-{%- if cookiecutter.usar_docs_api == "s" -%}
+{%- if cookiecutter.usar_docs_api == "s" %}
 Example endpoint for creating a news item
 In this example the specification is taken from external YAML file
 ---
@@ -46,4 +46,4 @@ responses:
     examples:
       application/json:
         error: "Título e conteúdo são obrigatórios"
-{%- endif -%}
+{%- endif %}

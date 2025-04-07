@@ -1,4 +1,4 @@
-{% if cookiecutter.usar_middlewares == "s" %}
+{%- if cookiecutter.usar_middlewares == "s" %}
 from flask import request, g
 import time
 import uuid
@@ -32,4 +32,4 @@ def middlewares(app):
         """Executado no final da requisição, mesmo em caso de erro"""
         if error:
             app.logger.error(f"Erro na requisição: {error}")
-{% endif %}
+{%- endif %}

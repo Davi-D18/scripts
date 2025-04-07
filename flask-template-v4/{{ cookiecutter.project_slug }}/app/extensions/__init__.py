@@ -1,5 +1,3 @@
-{% if cookiecutter.usar_banco_de_dados == "s" %}
-from .extensions import db, migrate
+from .extensions import db, migrate, init_extensions
 
-__all__ = ["db", "migrate"]
-{% endif %}
+__all__ = ["db", "migrate", "init_extensions"]

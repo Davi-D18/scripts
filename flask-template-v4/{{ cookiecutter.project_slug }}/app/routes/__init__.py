@@ -1,4 +1,1 @@
-from .routes import main
-
-__all__ = ['main']
-
+# importe as rotas para cá e salve na variável __all__

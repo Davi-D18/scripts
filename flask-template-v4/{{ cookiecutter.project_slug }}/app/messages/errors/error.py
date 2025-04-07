@@ -1,5 +1,3 @@
-from flask import jsonify
-
 class APIError(Exception):
     """Classe base para todos os erros da API"""
     status_code = 500
@@ -18,7 +16,7 @@ class APIError(Exception):
         }
         if self.details:
             response["details"] = self.details
-        return jsonify(response), self.status_code
+        return response, self.status_code
 
 # Erros específicos
 class ItemNotFoundError(APIError):

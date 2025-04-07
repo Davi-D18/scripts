@@ -1,0 +1,1 @@
+# Importe os arquivos dos models aqui e use a variavel __all__ para armazenar

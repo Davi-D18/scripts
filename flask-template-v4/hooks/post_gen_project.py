@@ -36,7 +36,6 @@ def main():
     
     use_middlewares = "{{ cookiecutter.usar_middlewares }}"
     usar_docs_api = "{{ cookiecutter.usar_docs_api }}"
-    usar_serializacao = "{{ cookiecutter.usar_serializacao }}"
     
    # Se o usuário não usar middlewares, remova o diretório app/middlewares
     if use_middlewares.lower() == 'n':
@@ -48,10 +47,6 @@ def main():
         swagger_dir = os.path.join(project_dir, 'swagger')
         remove_directory(swagger_dir)
         
-    if usar_serializacao.lower() == "n":
-        schemas_dir = os.path.join(project_dir, 'app', 'schemas')
-        remove_directory(schemas_dir)
-    
     print("Criando ambiente virtual em 'venv'...")
     subprocess.check_call([sys.executable, '-m', 'venv', venv_dir])
     print("Ambiente virtual criado com sucesso!")
@@ -79,6 +74,10 @@ def main():
         subprocess.call(['cmd', '/k', activate_script])
     else:
         subprocess.call(['bash', '--init-file', activate_script])
+
+    print("""
+        Tudo pronto!
+    """)
 
 if __name__ == '__main__':
     main()

@@ -1,4 +1,3 @@
-{% if cookiecutter.usar_banco_de_dados == "s" %}
 import os
 
 DATABASE_URI = os.getenv('DATABASE_URL')
@@ -10,4 +9,3 @@ if not DATABASE_URI:
 DATABASE_CONFIG = {
     "DATABASE_URI": DATABASE_URI
 }
-{% endif %}
