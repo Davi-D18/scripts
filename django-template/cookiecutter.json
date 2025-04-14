@@ -1,0 +1,10 @@
+{
+  "project_name": "nome do projeto",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+  "use_authentication": ["no", "yes"],
+  "use_documentation": ["no", "yes"],
+  "banco_de_dados": ["sqlite3", "mysql", "postgresql"],
+  "_copy_without_render": [
+    "core/management/commands/createapp.py"
+  ]
+}

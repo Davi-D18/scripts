@@ -1,4 +1,3 @@
-# app/commands/dev_commands.py
 import click
 import subprocess
 import os
