@@ -12,6 +12,7 @@ def main():
     3. Renames main app directory
     4. Prints next steps
     """
+
     project_dir = Path.cwd()
     venv_dir = project_dir / 'venv'
     requirements_file = project_dir / 'requirements.txt'
@@ -31,12 +32,12 @@ def main():
     # Install requirements
     print('\nInstalling requirements...')
     subprocess.run([str(pip_path), 'install', '-r', str(requirements_file)], check=True)
-
-    print('\n✨ Setup completo! ✨')
+    
+    print('\n Setup completo! ')
     print('Próximos passos:')
     print(f'1. cd {project_dir.name}')
     print('2. Olhe o arquivo README.md')
-    print('\nHappy coding! 🚀\n')
+    print('\nHappy coding! \n')
 
 if __name__ == '__main__':
     main()
