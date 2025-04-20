@@ -33,11 +33,19 @@ def main():
     print('\nInstalling requirements...')
     subprocess.run([str(pip_path), 'install', '-r', str(requirements_file)], check=True)
     
-    print('\n Setup completo! ')
-    print('Próximos passos:')
-    print(f'1. cd {project_dir.name}')
-    print('2. Olhe o arquivo README.md')
-    print('\nHappy coding! \n')
+
+    mensagem = f"""
+    Setup completo!
+    Ambiente virtual criado e ativado
+    
+    Próximos passos:
+    1. cd {project_dir.name}
+    2. Olhe o arquivo README.md
+    
+    Happy Coding!     :)
+    """
+
+    print(mensagem)
 
 if __name__ == '__main__':
     main()
