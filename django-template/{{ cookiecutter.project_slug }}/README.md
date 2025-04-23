@@ -219,3 +219,9 @@ fieldsets = (
     }),
 )
 ```
+
+# Windows
+Caso use Windows, em vez de executar comandos com `python manage.py comando` use o seguinte:
+```shell
+./run_utf8.sh comando
+``` 
