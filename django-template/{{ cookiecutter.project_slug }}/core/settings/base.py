@@ -3,8 +3,8 @@ Base settings for {{ cookiecutter.project_slug }} project.
 """
 import os
 from pathlib import Path
-
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -35,11 +35,14 @@ INSTALLED_APPS = [
     'drf_yasg',
     {%- endif %}
     {%- endif %}
+    'corsheaders',
     'core'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -98,6 +101,11 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
 {%- else %}
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -106,7 +114,8 @@ REST_FRAMEWORK = {
 }
 {%- endif %}
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'

@@ -29,7 +29,6 @@ media/
 
 # Virtual Environment
 venv/
-ENV/
 
 # IDE
 .idea/
@@ -38,4 +37,4 @@ ENV/
 *.swo
 
 # Environment variables
-# .env
+.env
