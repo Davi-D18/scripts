@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     {%- if cookiecutter.use_authentication == "yes" %}
-        'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
     {%- if cookiecutter.use_documentation == "yes" %}
     'drf_yasg',
     {%- endif %}
