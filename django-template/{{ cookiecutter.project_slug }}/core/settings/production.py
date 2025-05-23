@@ -1,9 +1,10 @@
 from .base import *  # noqa: F403
+from datetime import timedelta
 
-# SECURITY WARNING: don't run with debug turned on in production!
+
 DEBUG = False
 
-DB = DATABASES["default"]
+DATABASES["default"] = DATABASES["production"]
 
 # Security settings
 SECURE_SSL_REDIRECT = True
@@ -45,6 +46,11 @@ LOGGING = {
 }
 
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', '*').split(',')
-
-CORS_ALLOW_ALL_ORIGINS = False  # Desativa o acesso total
 CORS_ALLOWED_ORIGINS = os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '*').split(',')
+
+{% if cookiecutter.use_authentication == "yes" %}
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+{%- endif %}

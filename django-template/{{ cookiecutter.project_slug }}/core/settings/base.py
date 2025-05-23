@@ -1,10 +1,9 @@
 """
-Base settings for {{ cookiecutter.project_slug }} project.
+Configurações base do projeto.
 """
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from datetime import timedelta
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -76,19 +75,30 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 DATABASES = {
     'default': {
-        {%- if cookiecutter.banco_de_dados == "postgres" %}
-        'ENGINE': 'django.db.backends.postgresql',
-        {%- elif cookiecutter.banco_de_dados == "mysql" %}
-        'ENGINE': 'django.db.backends.mysql',
-        {%- else %}
         'ENGINE': 'django.db.backends.sqlite3',
-        {%- endif %}
+        'NAME': 'database.db'
+    },
+    'production': {
+        {%- if cookiecutter.banco_de_dados == "postgresql" %}
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
+        {%- elif cookiecutter.banco_de_dados == "mysql" %}
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        {%- else %}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'database.db'
+        {%- endif %}
     }
+
 }
 
 # Rest Framework
@@ -102,10 +112,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
 {%- else %}
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [

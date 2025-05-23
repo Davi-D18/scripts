@@ -1,4 +1,5 @@
 from .base import *  # noqa: F403
+from datetime import timedelta
 
 DEBUG = True
 
@@ -19,3 +20,10 @@ SWAGGER_SETTINGS = {
     }
 }
 {% endif %}
+
+{%- if cookiecutter.use_authentication == "yes" %}
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+{%- endif %}

@@ -2,6 +2,7 @@ Django>=5.0,<6.0
 Dotenv
 djangorestframework>=3.15.0
 django-cors-headers>=3.14.0
+gunicorn
 whitenoise
 {%- if cookiecutter.use_authentication == "yes" %}
 djangorestframework-simplejwt
@@ -13,5 +14,5 @@ drf-yasg>=1.20.0
 mysqlclient
 {%- endif %}
 {%- if cookiecutter.banco_de_dados == "postgresql" %}
-psycopg2-binary
+psycopg2
 {%- endif %}
