@@ -1,7 +1,0 @@
-{
-  "project_name": "MeuProjeto",
-  "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '_') }}",
-  "usar_banco_de_dados": "s",
-  "usar_sistema_de_login": "s",
-  "usar_middlewares": "s"
-}
