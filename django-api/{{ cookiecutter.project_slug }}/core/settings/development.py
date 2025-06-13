@@ -1,3 +1,7 @@
+"""
+Configurações de desenvolvimento.
+"""
+
 from .base import *  # noqa: F403
 from datetime import timedelta
 
@@ -27,3 +31,5 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 {%- endif %}
+
+ALLOWED_HOSTS = ['*'] # Permitir todos os hosts em desenvolvimento
