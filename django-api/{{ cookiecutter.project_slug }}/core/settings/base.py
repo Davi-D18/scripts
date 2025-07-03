@@ -73,15 +73,8 @@ DATABASES = {
         'NAME': 'database.db'
     },
     'production': {
-        {%- if cookiecutter.banco_de_dados == "postgresql" %}
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        {%- elif cookiecutter.banco_de_dados == "mysql" %}
-        'ENGINE': 'django.db.backends.mysql',
+        {%- if cookiecutter.banco_de_dados != "sqlite3" %}
+        'ENGINE': 'django.db.backends.{{cookiecutter.banco_de_dados}}',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
