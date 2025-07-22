@@ -3,12 +3,15 @@ Configurações de produção.
 """
 
 from .base import *  # noqa: F403
+{% if cookiecutter.use_authentication == "yes" %}
 from datetime import timedelta
+{%- endif %}
 
 
 DEBUG = False
-
+{%- if cookiecutter.banco_de_dados != "sqlite3" %}
 DATABASES["default"] = DATABASES["production"]
+{%- endif %}
 
 # Security settings
 SECURE_SSL_REDIRECT = True

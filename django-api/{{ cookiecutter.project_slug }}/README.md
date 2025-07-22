@@ -19,16 +19,46 @@ Edite o arquivo `.env` e configure as seguintes variáveis:
 - `DJANGO_CORS_ALLOWED_ORIGINS`: Sites que poderão fazer requisições
 
 **Configurações de banco de dados:**
-- Se você escolheu `sqlite3` no cookiecutter: não precisa configurar nada
-- Se escolheu `mysql` ou `postgresql`: preencha as credenciais do banco
+{%- if cookiecutter.banco_de_dados == "sqlite3" %}
+- Está configurado o SQLite3, não precisa configurar credenciais de banco, apenas o nome do arquuvo que será gerado em `core/settings/base.py`
+{%- else %}
+- Você escolheu **{{ cookiecutter.banco_de_dados|upper }}**: preencha as credenciais do banco no arquivo `.env`:
+  - `DB_NAME`: Nome do banco de dados
+  - `DB_USER`: Usuário do banco
+  - `DB_PASSWORD`: Senha do banco
+  - `DB_HOST`: Host do banco (ex: localhost)
+  - `DB_PORT`: Porta do banco ({{ "3306" if cookiecutter.banco_de_dados == "mysql" else "5432" }}) padrão
+{%- endif %}
 
-**Nota importante:** No desenvolvimento, sempre será usado SQLite3, independente da escolha. O banco configurado será usado apenas em produção.
+**Nota importante:** No desenvolvimento, sempre será usado SQLite3, independente da escolha. O banco configurado será usado apenas em produção, porém nada impede de alterar.
 
 ### 1.3 Gerar chave secreta
 ```bash
 sh django.sh new_key
 ```
 Copie a chave gerada e cole no arquivo `.env` na variável `DJANGO_SECRET_KEY`.
+
+{%- if cookiecutter.use_authentication == "yes" %}
+### Configurar autenticação JWT
+Configure a chave JWT no arquivo `.env`:
+```bash
+sh django.sh new_key  # Use a mesma chave ou gere uma nova
+```
+Copie a chave gerada e cole na variável `JWT_SECRET_KEY` no arquivo `.env`.
+
+**Endpoints de autenticação disponíveis:**
+- `POST /api/v1/token/` - Login (retorna access e refresh token)
+- `POST /api/v1/token/refresh/` - Renovar token
+{%- endif %}
+
+{%- if cookiecutter.use_documentation == "yes" %}
+### Configurar documentação Swagger
+Você habilitou documentação automática. Configure no arquivo `.env`:
+- `SWAGGER_SCHEME`: Protocolo usado (http para desenvolvimento, https para produção)
+
+**Documentação disponível em:**
+- `/api/v1/docs/` - Interface Swagger
+{%- endif %}
 
 ## 2. Estrutura de configurações
 
@@ -79,7 +109,7 @@ __all__ = ["Produtos"]
 ### 3.4 Criar migrações e aplicar
 ```bash
 sh django.sh makemigrations
-sh django.sh makemigrations core  # Necessário para criar migrações do sistema de controle de seeders
+sh django.sh makemigrations core  # Opcional: Necessário para criar migrações do sistema de controle de seeders
 sh django.sh migrate
 ```
 
@@ -215,6 +245,8 @@ project_name/
 │   ├── management/commands/ # Comandos personalizados
 │   └── urls.py
 ├── docs/                    # Documentação
+│   ├── DRF.md              # Guia do Django REST Framework
+│   └── ORM.md              # Guia do Django ORM
 ├── scripts/                 # Scripts de automação
 │   └── start.sh            # Script de inicialização para produção
 ├── seeders/                 # Seeders organizados por app

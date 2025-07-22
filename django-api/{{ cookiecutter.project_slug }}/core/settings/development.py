@@ -3,7 +3,10 @@ Configurações de desenvolvimento.
 """
 
 from .base import *  # noqa: F403
+{%- if cookiecutter.use_authentication == "yes" %}
 from datetime import timedelta
+{%- endif %}
+
 
 DEBUG = True
 
@@ -27,7 +30,7 @@ SWAGGER_SETTINGS = {
 
 {%- if cookiecutter.use_authentication == "yes" %}
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 {%- endif %}

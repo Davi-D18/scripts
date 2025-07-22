@@ -2,17 +2,24 @@
 import os
 import subprocess
 import sys
+import shutil
 from pathlib import Path
 
 
-def main():
+def remove_authentication_app():
     """
-    1. Creates virtual environment
-    2. Installs requirements
-    3. Renames main app directory
-    4. Prints next steps
+    Remove o app authentication se a opção use_authentication for "no"
     """
+    use_authentication = "{{ cookiecutter.use_authentication }}"
+    if use_authentication == "no":
+        auth_app_path = Path.cwd() / 'apps' / 'authentication'
+        if auth_app_path.exists():
+            shutil.rmtree(auth_app_path)
 
+    return
+
+
+def main():
     project_dir = Path.cwd()
     venv_dir = project_dir / 'venv'
     requirements_file = project_dir / 'requirements.txt'
@@ -29,10 +36,13 @@ def main():
         python_path = venv_dir / 'bin' / 'python'
         pip_path = venv_dir / 'bin' / 'pip'
 
-    # Install requirements
-    print('\nInstalling requirements...')
-    subprocess.run([str(pip_path), 'install', '-r', str(requirements_file)], check=True)
+    print('\nInstalando dependências no ambiente virtual...')
+    subprocess.run([str(python_path), '-m', 'pip', 'install', '--upgrade', 'pip', '--no-warn-script-location'], check=True)
     
+    subprocess.run([str(python_path), '-m', 'pip', 'install', '-r', str(requirements_file), '--no-warn-script-location'], check=True)
+    
+    # Remove o app authentication se não for necessário
+    remove_authentication_app()
 
     mensagem = f"""
     Setup completo!

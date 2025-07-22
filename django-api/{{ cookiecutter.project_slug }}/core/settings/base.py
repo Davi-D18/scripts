@@ -8,13 +8,10 @@ from dotenv import load_dotenv
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
 
-# Build paths inside the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
 
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -72,19 +69,16 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'database.db'
     },
+    {%- if cookiecutter.banco_de_dados != "sqlite3" %}
     'production': {
-        {%- if cookiecutter.banco_de_dados != "sqlite3" %}
         'ENGINE': 'django.db.backends.{{cookiecutter.banco_de_dados}}',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
-        {%- else %}
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'database.db'
-        {%- endif %}
     }
+    {%- endif %}
 }
 
 # Rest Framework
@@ -111,9 +105,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
