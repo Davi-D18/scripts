@@ -1,7 +1,7 @@
 """
 Configurações de produção.
 """
-
+import os
 from .base import *  # noqa: F403
 {% if cookiecutter.use_authentication == "yes" %}
 from datetime import timedelta
@@ -42,12 +42,21 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
+        'db': {
+            'level': 'WARNING',
+            'class': 'django_db_logger.db_log_handler.DatabaseLogHandler',
+        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'level': 'ERROR',
+            'handlers': ['console', 'db'],
+            'level': 'WARNING',
             'propagate': True,
+        },
+        'django_db_logger': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     },
 }
@@ -60,5 +69,6 @@ CORS_ALLOWED_ORIGINS = os.getenv('DJANGO_CORS_ALLOWED_ORIGINS', '*').split(',')
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=20),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "SIGNING_KEY": os.getenv('JWT_SECRET_KEY', SECRET_KEY),
 }
 {%- endif %}

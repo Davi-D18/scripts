@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     {%- endif %}
     {%- endif %}
     'corsheaders',
+    'django_db_logger',
     'core'
 ]
 

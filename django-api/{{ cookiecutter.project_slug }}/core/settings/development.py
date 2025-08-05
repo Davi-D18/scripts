@@ -5,6 +5,7 @@ Configurações de desenvolvimento.
 from .base import *  # noqa: F403
 {%- if cookiecutter.use_authentication == "yes" %}
 from datetime import timedelta
+import os
 {%- endif %}
 
 
@@ -32,7 +33,24 @@ SWAGGER_SETTINGS = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "SIGNING_KEY": os.getenv('JWT_SECRET_KEY', SECRET_KEY),
 }
 {%- endif %}
 
-ALLOWED_HOSTS = ['*'] # Permitir todos os hosts em desenvolvimento
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Development Tools
+INSTALLED_APPS += [
+    'django_extensions',
+    'debug_toolbar',
+]
+
+MIDDLEWARE += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+# Debug Toolbar
+INTERNAL_IPS = [
+    '127.0.0.1',
+    'localhost',
+]

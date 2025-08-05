@@ -1,6 +1,4 @@
-import os
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from django.db import connection
 
 
@@ -45,11 +43,11 @@ class Command(BaseCommand):
     
     def _export_structure(self, cursor, f):
         cursor.execute("""
-            SELECT table_name FROM information_schema.tables 
+            SELECT table_name FROM information_schema.tables
             WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE'
         """)
         tables = [row[0] for row in cursor.fetchall()]
-        
+
         # Ordena tabelas por dependências
         ordered_tables = self._order_tables_by_dependencies(cursor, tables)
         
@@ -67,7 +65,7 @@ class Command(BaseCommand):
         cursor.execute("""
             SELECT table_name, referenced_table_name
             FROM information_schema.key_column_usage
-            WHERE table_schema = DATABASE() 
+            WHERE table_schema = DATABASE()
             AND referenced_table_name IS NOT NULL
         """)
         
@@ -100,7 +98,7 @@ class Command(BaseCommand):
     
     def _export_data(self, cursor, f):
         cursor.execute("""
-            SELECT table_name FROM information_schema.tables 
+            SELECT table_name FROM information_schema.tables
             WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE'
         """)
         tables = [row[0] for row in cursor.fetchall()]

@@ -1,0 +1,56 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+skip = ["migrations", "venv"]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+plugins = ["mypy_django_plugin.main"]
+exclude = [
+    "migrations/",
+    "venv/",
+    "build/",
+    "dist/",
+    "core/management/commands/"
+]
+
+[tool.django-stubs]
+django_settings_module = "core.settings.development"
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503", "E501"]
+exclude = [
+    "migrations",
+    "__pycache__",
+    "manage.py",
+    "*/settings/*",
+    ".git",
+    ".tox",
+    "dist",
+    "doc",
+    "*egg*",
+    "build",
+    "venv"
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "core.settings.development"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "--cov=. --cov-report=html --cov-report=term-missing"

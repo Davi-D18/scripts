@@ -22,7 +22,22 @@ else
   echo "✅ Arquivos estáticos já coletados, pulando collectstatic."
 fi
 
-# 4. Criar superusuário a partir das variáveis de ambiente
+# 4. Aplicar seeders no banco de dados
+if [ -d "seeders" ] && [ "$(ls -A seeders 2>/dev/null)" ]; then
+  echo "🌱 Aplicando seeders..."
+  python manage.py shell -c "
+from django.core.management import call_command
+try:
+    call_command('seeder', '--all')
+    print('✅ Seeders aplicados com sucesso!')
+except Exception as e:
+    print(f'⚠️ Erro ao aplicar seeders: {e}')
+"
+else
+  echo "ℹ️ Pasta seeders não encontrada ou vazia, pulando seeders."
+fi
+
+# 5. Criar superusuário a partir das variáveis de ambiente
 echo "👤 Verificando superusuário..."
 python manage.py shell -c "
 import os
@@ -41,6 +56,7 @@ else:
     print('⚠️ Variáveis de ambiente para superusuário não definidas.')
 "
 
-# 5. Inicia o Gunicorn na porta definida pelo Render
+# 6. Inicia o Gunicorn na porta definida pelo Render
 echo "🚀 Iniciando Gunicorn..."
+PORT=${PORT:-8000}
 exec gunicorn core.wsgi:application --bind 0.0.0.0:$PORT

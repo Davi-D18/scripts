@@ -22,7 +22,7 @@ def remove_authentication_app():
 def main():
     project_dir = Path.cwd()
     venv_dir = project_dir / 'venv'
-    requirements_file = project_dir / 'requirements.txt'
+    requirements_file = project_dir / 'requirements-dev.txt'
 
     # Create virtual environment
     print('\nCriando ambiente virtual...')

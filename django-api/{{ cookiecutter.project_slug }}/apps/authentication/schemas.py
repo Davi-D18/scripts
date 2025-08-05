@@ -40,7 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class TokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomerTokenObtainPairSerializer(TokenObtainPairSerializer):
     credential = serializers.CharField(
         write_only=True,
         error_messages={'required': 'O nome de usuário ou email é obrigatório'}

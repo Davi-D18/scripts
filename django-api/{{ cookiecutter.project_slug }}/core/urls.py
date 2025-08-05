@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+import os
 {%- if cookiecutter.use_documentation == "yes" %}
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -26,3 +27,13 @@ urlpatterns = [
    path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
    {%- endif %}
 ]
+
+# Debug Toolbar URLs (apenas em desenvolvimento)
+if os.getenv('DJANGO_SETTINGS_MODULE', '').endswith('.development'):
+    try:
+        import debug_toolbar
+        urlpatterns += [
+            path('debug/', include(debug_toolbar.urls)),
+        ]
+    except ImportError:
+        pass

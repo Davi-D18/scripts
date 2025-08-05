@@ -1,4 +1,57 @@
-# Como usar este template Django API
+## 🚀 Configuração
+
+### Ambiente de Produção
+```bash
+pip install -r requirements.txt
+sh scripts/start.sh
+```
+
+### Ambiente de Desenvolvimento
+```bash
+sh django.sh migrate
+```
+
+## 🛠 Comandos de Desenvolvimento
+
+### Formatação de Código
+```bash
+make format    # Formatar com black + isort
+```
+
+### Verificação de Qualidade
+```bash
+make lint      # Verificar com flake8 + mypy
+```
+
+### Testes
+```bash
+make test      # Executar testes com pytest
+```
+
+### Limpeza
+```bash
+make clean     # Remover arquivos temporários
+```
+
+### Servidor de Desenvolvimento
+```bash
+make dev       # Iniciar servidor
+```
+
+## 📦 Dependências
+
+- **requirements.txt**: Dependências de produção
+- **requirements-dev.txt**: Dependências de desenvolvimento (inclui produção)
+
+## 🔧 Ferramentas Configuradas
+
+- **Black**: Formatação automática de código
+- **isort**: Organização de imports
+- **Flake8**: Linting e verificação de estilo
+- **MyPy**: Type checking
+- **Pytest**: Framework de testes
+
+
 
 ## 1. Configuração inicial
 
@@ -15,8 +68,8 @@ Edite o arquivo `.env` e configure as seguintes variáveis:
 - `DJANGO_SECRET_KEY`: Gere uma nova chave usando `sh django.sh new_key`
 
 **Apenas para Produção:**
-- `DJANGO_ALLOWED_HOSTS`: Domínios onde a API responderá
-- `DJANGO_CORS_ALLOWED_ORIGINS`: Sites que poderão fazer requisições
+- `DJANGO_ALLOWED_HOSTS`
+- `DJANGO_CORS_ALLOWED_ORIGINS`
 
 **Configurações de banco de dados:**
 {%- if cookiecutter.banco_de_dados == "sqlite3" %}
@@ -47,8 +100,9 @@ sh django.sh new_key  # Use a mesma chave ou gere uma nova
 Copie a chave gerada e cole na variável `JWT_SECRET_KEY` no arquivo `.env`.
 
 **Endpoints de autenticação disponíveis:**
-- `POST /api/v1/token/` - Login (retorna access e refresh token)
-- `POST /api/v1/token/refresh/` - Renovar token
+- `POST /api/v1/auth/login/` - Login (retorna access e refresh token)
+- `POST /api/v1/auth/login/refresh/` - Renovar token
+- `POST /api/v1/auth/register/` - Registrar
 {%- endif %}
 
 {%- if cookiecutter.use_documentation == "yes" %}
