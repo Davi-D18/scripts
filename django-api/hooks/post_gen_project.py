@@ -5,6 +5,34 @@ import sys
 import shutil
 from pathlib import Path
 
+def format_code_with_make(python_path):
+    """Executa o comando 'make format' para formatar o código"""
+    print("\n🔧 Formatando código...")
+    try:
+        # Executa make format usando o Python do ambiente virtual
+        subprocess.run(
+            [str(python_path), "-m", "black", "."],
+            check=True
+        )
+        subprocess.run(
+            [str(python_path), "-m", "isort", "."],
+            check=True
+        )
+        print("✅ Código formatado com sucesso!")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Erro ao formatar código: {e}")
+        print("Execute manualmente depois: make format")
+
+def remove_documentation_config():
+    """
+    Remove configurações de documentação se use_documentation for "no"
+    """
+    use_documentation = "{{ cookiecutter.use_documentation }}"
+    if use_documentation == "no":
+        # Remover swagger.py
+        swagger_path = Path.cwd() / 'core' / 'configs' / 'libs' / 'swagger.py'
+        if swagger_path.exists():
+            swagger_path.unlink()
 
 def remove_authentication_app():
     """
@@ -15,6 +43,11 @@ def remove_authentication_app():
         auth_app_path = Path.cwd() / 'apps' / 'authentication'
         if auth_app_path.exists():
             shutil.rmtree(auth_app_path)
+
+        # Remover jwt.py
+        jwt_config_path = Path.cwd() / 'core' / 'configs' / 'libs' / 'jwt.py'
+        if jwt_config_path.exists():
+            jwt_config_path.unlink()
 
     return
 
@@ -43,6 +76,8 @@ def main():
     
     # Remove o app authentication se não for necessário
     remove_authentication_app()
+    remove_documentation_config()
+    format_code_with_make(python_path)
 
     mensagem = f"""
     Setup completo!

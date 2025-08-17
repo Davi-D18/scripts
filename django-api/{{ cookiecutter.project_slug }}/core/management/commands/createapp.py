@@ -96,8 +96,8 @@ class Command(BaseCommand):
         with open(apps_file, 'r') as f:
             content = f.read()
         content = content.replace(
-            f"name = '{app_name}'",
-            f"name = 'apps.{app_name}'"
+            f'name = "{app_name}"',
+            f'name = "apps.{app_name}"'
         )
         with open(apps_file, 'w') as f:
             f.write(content)

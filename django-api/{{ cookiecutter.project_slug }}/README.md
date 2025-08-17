@@ -33,11 +33,6 @@ make test      # Executar testes com pytest
 make clean     # Remover arquivos temporários
 ```
 
-### Servidor de Desenvolvimento
-```bash
-make dev       # Iniciar servidor
-```
-
 ## 📦 Dependências
 
 - **requirements.txt**: Dependências de produção
@@ -73,7 +68,7 @@ Edite o arquivo `.env` e configure as seguintes variáveis:
 
 **Configurações de banco de dados:**
 {%- if cookiecutter.banco_de_dados == "sqlite3" %}
-- Está configurado o SQLite3, não precisa configurar credenciais de banco, apenas o nome do arquuvo que será gerado em `core/settings/base.py`
+- Está configurado o SQLite3, não precisa configurar credenciais de banco, apenas o nome do arquivo que será gerado em `core/settings/base.py`
 {%- else %}
 - Você escolheu **{{ cookiecutter.banco_de_dados|upper }}**: preencha as credenciais do banco no arquivo `.env`:
   - `DB_NAME`: Nome do banco de dados
@@ -107,11 +102,10 @@ Copie a chave gerada e cole na variável `JWT_SECRET_KEY` no arquivo `.env`.
 
 {%- if cookiecutter.use_documentation == "yes" %}
 ### Configurar documentação Swagger
-Você habilitou documentação automática. Configure no arquivo `.env`:
-- `SWAGGER_SCHEME`: Protocolo usado (http para desenvolvimento, https para produção)
+Para configurar, basta ir em `core/configs/libs/swagger.py` e então configuar da forma que achar melhor. A instância da classe de configuração é automaticamente importada em `core/settings/base.py` usada tanto em produção como em desenvolvimento
 
 **Documentação disponível em:**
-- `/api/v1/docs/` - Interface Swagger
+- `/docs/` - Interface Swagger
 {%- endif %}
 
 ## 2. Estrutura de configurações
@@ -220,7 +214,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
 ```
 
-### 4.4 Rotas (apps/produtos/routes/urls.py)
+### 4.4 Rotas (apps/produtos/routes/)
 ```python
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
@@ -297,10 +291,8 @@ project_name/
 │   │   ├── development.py
 │   │   └── production.py
 │   ├── management/commands/ # Comandos personalizados
-│   └── urls.py
-├── docs/                    # Documentação
-│   ├── DRF.md              # Guia do Django REST Framework
-│   └── ORM.md              # Guia do Django ORM
+│   ├── urls.py
+│   └── configs/libs         # Configurações de libs
 ├── scripts/                 # Scripts de automação
 │   └── start.sh            # Script de inicialização para produção
 ├── seeders/                 # Seeders organizados por app
