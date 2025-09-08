@@ -13,10 +13,28 @@ class BaseConfig:
         return config
     
     def override(self, **kwargs) -> "BaseConfig":
-        """Sobrescreve atributos existentes"""
+        """Sobrescreve atributos existentes. Se o atributo atual for lista/dict,
+        e o novo valor for do mesmo tipo, faz merge ao invés de substituir."""
         for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
+            if not hasattr(self, key):
+                raise AttributeError(
+                    f"'{self.__class__.__name__}' não tem o atributo '{key}'"
+                )
+
+            current = getattr(self, key)
+            # merge para listas
+            if isinstance(current, list) and isinstance(value, list):
+                # evita duplicatas simples (opcional)
+                merged = [*current]
+                for item in value:
+                    if item not in merged:
+                        merged.append(item)
+                setattr(self, key, merged)
+            # merge para dicts
+            elif isinstance(current, dict) and isinstance(value, dict):
+                merged = {**current, **value}
+                setattr(self, key, merged)
             else:
-                raise AttributeError(f"'{self.__class__.__name__}' não tem o atributo '{key}'")
+                # substitui normalmente
+                setattr(self, key, value)
         return self
