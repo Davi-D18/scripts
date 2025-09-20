@@ -6,5 +6,6 @@
   "banco_de_dados": ["sqlite3", "mysql", "postgresql"],
   "_copy_without_render": [
     "core/management/commands/*.py"
-  ]
+  ],
+  "use_testes": ["no", "yes"]
 }
