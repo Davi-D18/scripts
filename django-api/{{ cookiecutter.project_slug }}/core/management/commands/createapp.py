@@ -14,7 +14,7 @@ class Command(BaseCommand):
         parser.add_argument(
             'resource',
             nargs='?',
-            help='Nome do recurso (singular ou plural) para gerar schemas, services, repository, routes e controllers'
+            help='Nome do recurso (singular ou plural) para gerar schemas, repository, routes e controllers'
         )
 
     def handle(self, **options):
@@ -49,16 +49,16 @@ class Command(BaseCommand):
             self._create_urls_py(app_dir, plural)
             self._print_success(app_name, resource)
             self._modify_controllers(app_dir, singular, plural)
-            self._modify_models(app_dir, plural)
+            self._modify_models(app_dir, plural, singular)
         except Exception as e:
             shutil.rmtree(app_dir, ignore_errors=True)
             raise CommandError(f'Erro ao configurar o app: {e}')
 
     def _create_directories(self, base_dir):
         folders = [
-            'controllers', 'models', 'schemas', 'services',
+            'controllers', 'models', 'schemas',
             'routes',
-            'tests/controllers', 'tests/models', 'tests/services',
+            'tests/controllers', 'tests/models',
         ]
         for folder in folders:
             path = os.path.join(base_dir, folder)
@@ -81,8 +81,7 @@ class Command(BaseCommand):
     def _create_scaffold_files(self, base_dir, singular, plural):
         templates = {
             os.path.join('schemas', f'{singular}_schema.py'): self._template_schema(singular, plural),
-            os.path.join('services', f'{plural}_service.py'): self._template_service(),
-            os.path.join('routes', f'{plural}_routes.py'): self._template_routes(plural),
+            os.path.join('routes', f'{plural}_routes.py'): self._template_routes(plural, singular),
         }
         for rel_path, content in templates.items():
             full_path = os.path.join(base_dir, rel_path)
@@ -113,8 +112,6 @@ Este é um app do projeto {app_name}.
 ├── controllers/     # Views e ViewSets
 ├── models/          # Modelos do Django
 ├── schemas/         # Schemas para validação
-├── services/        # Lógica de negócio
-├── repository/      # Camada de acesso a dados
 ├── routes/          # URLs e ViewSets
 └── tests/           # Testes unitários
 ```
@@ -158,27 +155,24 @@ urlpatterns = [
         class_name = singular.capitalize()
         return f"""
 from rest_framework import serializers
-from apps.{plural}.models.{plural} import {plural.capitalize()}
+from apps.{plural}.models.{plural} import {singular.capitalize()}
+
 
 class {class_name}Serializer(serializers.ModelSerializer):
     class Meta:
-        model = {plural.capitalize()}
+        model = {singular.capitalize()}
         fields = '__all__'
+
 """
 
-    def _template_service(self):
-        return (
-            "# Implemente aqui a lógica de negócio para o recurso\n"
-        )
-
-    def _template_routes(self, plural):
-        class_name = plural.capitalize()
+    def _template_routes(self, plural, singular):
+        class_name = singular.capitalize()
         return "\n".join([
             "from django.urls import path, include",
             "from rest_framework.routers import DefaultRouter",
             f"from apps.{plural}.controllers.{plural}_controller import {class_name}ViewSet",
             "",
-
+            "",
             "router = DefaultRouter()",
             f"router.register('{plural}', {class_name}ViewSet)",
             "",
@@ -194,11 +188,13 @@ class {class_name}Serializer(serializers.ModelSerializer):
         content = f"""from rest_framework.viewsets import ModelViewSet
 
 from apps.{plural}.schemas.{singular}_schema import {class_name}Serializer
-from apps.{plural}.models.{plural} import {plural.capitalize()}
+from apps.{plural}.models.{plural} import {singular.capitalize()}
 
-class {plural.capitalize()}ViewSet(ModelViewSet):
-    queryset = {plural.capitalize()}.objects.all()
+
+class {singular.capitalize()}ViewSet(ModelViewSet):
+    queryset = {singular.capitalize()}.objects.all()
     serializer_class = {singular.capitalize()}Serializer
+    
 """
 
         for filename in os.listdir(controllers_dir):
@@ -207,9 +203,9 @@ class {plural.capitalize()}ViewSet(ModelViewSet):
                 with open(file_path, 'a') as f:
                     f.write(content) 
 
-    def _modify_models(self, base_dir, plural):
+    def _modify_models(self, base_dir, plural, singular):
         models_dir = os.path.join(base_dir, 'models')
-        class_name = plural.capitalize()
+        class_name = singular.capitalize()
 
         content = f"""
 
@@ -221,7 +217,7 @@ class {class_name}(models.Model):
         verbose_name = '' # nome da tabela no banco
 
     def __str__(self):
-        return self.name # Exibe o campo name
+        return self.name
 """
 
         for filename in os.listdir(models_dir):
@@ -229,4 +225,3 @@ class {class_name}(models.Model):
                 file_path = os.path.join(models_dir, filename)
                 with open(file_path, 'a') as f:
                     f.write(content)
-
