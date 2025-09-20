@@ -1,8 +1,8 @@
 from .base import BaseSettings
+from core.configs.libs.cors import CorsConfig
 {% if cookiecutter.use_authentication == "yes" %}
 from datetime import timedelta
 from core.configs.libs.jwt import JWTConfig
-from core.configs.libs.cors import CorsConfig
 
 ACESS_TOKEN_MINUTES = timedelta(minutes=50)
 {%- endif %}

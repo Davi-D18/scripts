@@ -5,6 +5,7 @@ import sys
 import shutil
 from pathlib import Path
 
+
 def format_code_with_make(python_path):
     """Executa o comando 'make format' para formatar o código"""
     print("\n🔧 Formatando código...")
@@ -55,7 +56,7 @@ def remove_authentication_app():
 def main():
     project_dir = Path.cwd()
     venv_dir = project_dir / 'venv'
-    requirements_file = project_dir / 'requirements-dev.txt'
+    requirements_file = project_dir / 'requirements_dev.txt'
 
     # Create virtual environment
     print('\nCriando ambiente virtual...')
