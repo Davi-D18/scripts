@@ -1,22 +1,28 @@
 import os
+from .base import BaseConfig
 
-ENV_ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
-ENV_ALLOWED_ORIGINS = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")
 
-class CorsConfig:
-    @staticmethod
-    def for_development() -> dict:
-        """Configuração padrão para ambiente de desenvolvimento"""
-        return {
-            "CORS_ALLOW_ALL_ORIGINS": True,
-        }
+class CorsConfig(BaseConfig):
+    def __init__(
+        self,
+        allow_all_origins=False,
+        allowed_origins=None,
+        allowed_hosts=None,
+        allow_credentials=True,
+    ):
+        self.cors_allow_all_origins = allow_all_origins
+        self.cors_allowed_origins = allowed_origins or os.getenv(
+            "DJANGO_CORS_ALLOWED_ORIGINS", ""
+        ).split(",")
+        self.cors_allow_credentials = allow_credentials
+        self.allowed_hosts = allowed_hosts or os.getenv(
+            "DJANGO_ALLOWED_HOSTS", ""
+        ).split(",")
 
-    @staticmethod
-    def for_production() -> dict:
-        """Configuração padrão para ambiente de produção"""
-        return {
-            "CORS_ALLOW_ALL_ORIGINS": False,
-            "CORS_ALLOWED_ORIGINS": ENV_ALLOWED_ORIGINS,
-            "CORS_ALLOW_CREDENTIALS": True,
-            "CORS_ALLOWED_HOSTS": ENV_ALLOWED_HOSTS
-        }
+    @classmethod
+    def for_development(cls):
+        return cls(allow_all_origins=True)
+
+    @classmethod
+    def for_production(cls):
+        return cls(allow_all_origins=False)

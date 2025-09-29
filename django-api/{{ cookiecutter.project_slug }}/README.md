@@ -28,24 +28,17 @@ make lint      # Verificar com flake8 + mypy
 make test      # Executar testes com pytest
 ```
 
-### Limpeza
-```bash
-make clean     # Remover arquivos temporários
-```
-
 ## 📦 Dependências
 
 - **requirements.txt**: Dependências de produção
-- **requirements-dev.txt**: Dependências de desenvolvimento (inclui produção)
+- **requirements_dev.txt**: Dependências de desenvolvimento (inclui produção)
 
 ## 🔧 Ferramentas Configuradas
 
 - **Black**: Formatação automática de código
 - **isort**: Organização de imports
 - **Flake8**: Linting e verificação de estilo
-- **MyPy**: Type checking
 - **Pytest**: Framework de testes
-
 
 
 ## 1. Configuração inicial
@@ -128,7 +121,6 @@ apps/nome_do_app/
 ├── controllers/
 ├── models/
 ├── schemas/
-├── services/
 ├── routes/
 ├── migrations/
 └── tests/

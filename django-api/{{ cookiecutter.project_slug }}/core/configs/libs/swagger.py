@@ -1,6 +1,7 @@
 from typing import Dict, Any
 from .base import BaseConfig
 
+
 class SwaggerConfig(BaseConfig):
     def __init__(
         self,
@@ -33,24 +34,24 @@ class SwaggerConfig(BaseConfig):
 
     def as_dict(self) -> Dict[str, Any]:
         config = {
-            'TITLE': self.title,
-            'VERSION': self.version,
-            'DESCRIPTION': self.description,
-            'SERVE_INCLUDE_SCHEMA': self.serve_include_schema,
-            'COMPONENT_SPLIT_REQUEST': self.components_split_request,
-            'SCHEMA_PATH_PREFIX': '/api/',
+            "TITLE": self.title,
+            "VERSION": self.version,
+            "DESCRIPTION": self.description,
+            "SERVE_INCLUDE_SCHEMA": self.serve_include_schema,
+            "COMPONENT_SPLIT_REQUEST": self.components_split_request,
+            "SCHEMA_PATH_PREFIX": "/api/",
         }
-        
+
         # Adiciona informações de contato se existirem
         contact = self._create_contact()
         if contact:
-            config['CONTACT'] = contact
-        
+            config["CONTACT"] = contact
+
         # Adiciona informações de licença se existirem
         license_info = self._create_license()
         if license_info:
-            config['LICENSE'] = license_info
-        
+            config["LICENSE"] = license_info
+
         return config
 
     def _create_contact(self) -> dict:
@@ -58,14 +59,11 @@ class SwaggerConfig(BaseConfig):
             return {
                 "name": self.contact_name,
                 "email": self.contact_email,
-                "url": self.contact_url
+                "url": self.contact_url,
             }
         return None
 
     def _create_license(self) -> dict:
         if any([self.license_name, self.license_url]):
-            return {
-                "name": self.license_name,
-                "url": self.license_url
-            }
+            return {"name": self.license_name, "url": self.license_url}
         return None

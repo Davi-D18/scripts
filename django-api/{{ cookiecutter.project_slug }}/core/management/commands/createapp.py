@@ -6,39 +6,41 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = 'Cria um novo app com a estrutura de diretórios do projeto e scaffolds de API'
+    help = (
+        "Cria um novo app com a estrutura de diretórios do projeto e scaffolds de API"
+    )
     missing_args_message = "Você precisa fornecer o nome do app."
 
     def add_arguments(self, parser):
-        parser.add_argument('name', help='Nome do app')
+        parser.add_argument("name", help="Nome do app")
         parser.add_argument(
-            'resource',
-            nargs='?',
-            help='Nome do recurso (singular ou plural) para gerar schemas, repository, routes e controllers'
+            "resource",
+            nargs="?",
+            help="Nome do recurso (singular ou plural) para gerar schemas, repository, routes e controllers",
         )
 
     def handle(self, **options):
-        app_name = options.pop('name')
-        resource = (options.pop('resource') or app_name).lower().strip()
+        app_name = options.pop("name")
+        resource = (options.pop("resource") or app_name).lower().strip()
 
         # Define singular e plural
-        if resource.endswith('s'):
+        if resource.endswith("s"):
             singular = resource[:-1]
             plural = resource
         else:
             singular = resource
             plural = f"{resource}s"
 
-        app_dir = os.path.join('apps', app_name)
+        app_dir = os.path.join("apps", app_name)
 
         # Cria a pasta 'apps/' e a pasta do app explicitamente
         os.makedirs(app_dir, exist_ok=True)  # Garante que 'apps/' existe
 
         try:
             # Cria o app usando o comando startapp padrão do Django
-            call_command('startapp', app_name, app_dir)
+            call_command("startapp", app_name, app_dir)
         except Exception as e:
-            raise CommandError(f'Erro ao criar app: {e}')
+            raise CommandError(f"Erro ao criar app: {e}")
 
         try:
             self._create_directories(app_dir)
@@ -52,24 +54,27 @@ class Command(BaseCommand):
             self._modify_models(app_dir, plural, singular)
         except Exception as e:
             shutil.rmtree(app_dir, ignore_errors=True)
-            raise CommandError(f'Erro ao configurar o app: {e}')
+            raise CommandError(f"Erro ao configurar o app: {e}")
 
     def _create_directories(self, base_dir):
         folders = [
-            'controllers', 'models', 'schemas',
-            'routes',
-            'tests/controllers', 'tests/models',
+            "controllers",
+            "models",
+            "schemas",
+            "routes",
+            "tests/controllers",
+            "tests/models",
         ]
         for folder in folders:
             path = os.path.join(base_dir, folder)
             os.makedirs(path, exist_ok=True)
-            open(os.path.join(path, '__init__.py'), 'w').close()
+            open(os.path.join(path, "__init__.py"), "w").close()
 
     def _move_default_files(self, base_dir, plural):
         moves = {
-            'models.py': os.path.join('models', f'{plural}.py'),
-            'views.py': os.path.join('controllers', f'{plural}_controller.py'),
-            'tests.py': os.path.join('tests', '__init__.py'),
+            "models.py": os.path.join("models", f"{plural}.py"),
+            "views.py": os.path.join("controllers", f"{plural}_controller.py"),
+            "tests.py": os.path.join("tests", "__init__.py"),
         }
         for src, dst in moves.items():
             src_path = os.path.join(base_dir, src)
@@ -80,25 +85,26 @@ class Command(BaseCommand):
 
     def _create_scaffold_files(self, base_dir, singular, plural):
         templates = {
-            os.path.join('schemas', f'{singular}_schema.py'): self._template_schema(singular, plural),
-            os.path.join('routes', f'{plural}_routes.py'): self._template_routes(plural, singular),
+            os.path.join("schemas", f"{singular}_schema.py"): self._template_schema(
+                singular, plural
+            ),
+            os.path.join("routes", f"{plural}_routes.py"): self._template_routes(
+                plural, singular
+            ),
         }
         for rel_path, content in templates.items():
             full_path = os.path.join(base_dir, rel_path)
             os.makedirs(os.path.dirname(full_path), exist_ok=True)
             if not os.path.exists(full_path):
-                with open(full_path, 'w') as f:
+                with open(full_path, "w") as f:
                     f.write(content)
 
     def _update_apps_py(self, base_dir, app_name):
-        apps_file = os.path.join(base_dir, 'apps.py')
-        with open(apps_file, 'r') as f:
+        apps_file = os.path.join(base_dir, "apps.py")
+        with open(apps_file, "r") as f:
             content = f.read()
-        content = content.replace(
-            f'name = "{app_name}"',
-            f'name = "apps.{app_name}"'
-        )
-        with open(apps_file, 'w') as f:
+        content = content.replace(f'name = "{app_name}"', f'name = "apps.{app_name}"')
+        with open(apps_file, "w") as f:
             f.write(content)
 
     def _create_readme(self, base_dir, app_name):
@@ -130,7 +136,7 @@ python manage.py test apps.{app_name}
 python manage.py test apps.{app_name}.tests.controllers
 ```
 """
-        with open(os.path.join(base_dir, 'README.md'), 'w') as f:
+        with open(os.path.join(base_dir, "README.md"), "w") as f:
             f.write(content)
 
     def _create_urls_py(self, base_dir, plural):
@@ -141,7 +147,7 @@ urlpatterns = [
     path('', include('apps.{plural}.routes.{plural}_routes')),
 ]
 """
-        with open(os.path.join(base_dir, 'urls.py'), 'w') as f:
+        with open(os.path.join(base_dir, "urls.py"), "w") as f:
             f.write(content)
 
     def _print_success(self, app_name, resource):
@@ -167,22 +173,24 @@ class {class_name}Serializer(serializers.ModelSerializer):
 
     def _template_routes(self, plural, singular):
         class_name = singular.capitalize()
-        return "\n".join([
-            "from django.urls import path, include",
-            "from rest_framework.routers import DefaultRouter",
-            f"from apps.{plural}.controllers.{plural}_controller import {class_name}ViewSet",
-            "",
-            "",
-            "router = DefaultRouter()",
-            f"router.register('{plural}', {class_name}ViewSet)",
-            "",
-            "urlpatterns = [",
-            "    path('', include(router.urls))",
-            "]"
-        ])
+        return "\n".join(
+            [
+                "from django.urls import path, include",
+                "from rest_framework.routers import DefaultRouter",
+                f"from apps.{plural}.controllers.{plural}_controller import {class_name}ViewSet",
+                "",
+                "",
+                "router = DefaultRouter()",
+                f"router.register('{plural}', {class_name}ViewSet)",
+                "",
+                "urlpatterns = [",
+                "    path('', include(router.urls))",
+                "]",
+            ]
+        )
 
     def _modify_controllers(self, base_dir, singular, plural):
-        controllers_dir = os.path.join(base_dir, 'controllers')
+        controllers_dir = os.path.join(base_dir, "controllers")
         class_name = singular.capitalize()
 
         content = f"""from rest_framework.viewsets import ModelViewSet
@@ -198,13 +206,13 @@ class {singular.capitalize()}ViewSet(ModelViewSet):
 """
 
         for filename in os.listdir(controllers_dir):
-            if filename.endswith('_controller.py'):
+            if filename.endswith("_controller.py"):
                 file_path = os.path.join(controllers_dir, filename)
-                with open(file_path, 'a') as f:
-                    f.write(content) 
+                with open(file_path, "a") as f:
+                    f.write(content)
 
     def _modify_models(self, base_dir, plural, singular):
-        models_dir = os.path.join(base_dir, 'models')
+        models_dir = os.path.join(base_dir, "models")
         class_name = singular.capitalize()
 
         content = f"""
@@ -221,7 +229,7 @@ class {class_name}(models.Model):
 """
 
         for filename in os.listdir(models_dir):
-            if filename.endswith(f'{plural}.py'):
+            if filename.endswith(f"{plural}.py"):
                 file_path = os.path.join(models_dir, filename)
-                with open(file_path, 'a') as f:
+                with open(file_path, "a") as f:
                     f.write(content)

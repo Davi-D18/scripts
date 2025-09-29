@@ -1,12 +1,11 @@
 from .base import BaseSettings
 from core.configs.libs.cors import CorsConfig
 {%- if cookiecutter.use_authentication == "yes" %}
-from datetime import timedelta
 from core.configs.libs.jwt import JWTConfig
-
-ACESS_TOKEN_MINUTES = timedelta(minutes=30)
+from core.configs.libs.constants import JWT_TIMEOUTS
 {%- endif %}
-CORS_CONFIG = CorsConfig().for_development()
+
+CORS_CONFIG = CorsConfig.for_development()
 
 class DevelopmentSettings(BaseSettings):
     """
@@ -19,7 +18,7 @@ class DevelopmentSettings(BaseSettings):
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
     {%- if cookiecutter.use_authentication == "yes" %}
-    SIMPLE_JWT = JWTConfig(access_token=ACESS_TOKEN_MINUTES).as_dict()
+    SIMPLE_JWT = JWTConfig(access_token=JWT_TIMEOUTS['development']).as_dict()
     {%- endif %}
 
     INSTALLED_APPS =  [
@@ -39,4 +38,5 @@ class DevelopmentSettings(BaseSettings):
         "localhost",
     ]
 
-    ALLOW_ALL_ORIGINS = CORS_CONFIG["CORS_ALLOW_ALL_ORIGINS"]
+    # Configurações CORS
+    CORS_ALLOW_ALL_ORIGINS = CORS_CONFIG.cors_allow_all_origins

@@ -1,7 +1,7 @@
-.PHONY: install-dev format lint test clean
+.PHONY: install-dev format lint test
 
 install-dev:
-	pip install -r requirements-dev.txt
+	pip install -r requirements_dev.txt
 
 format:
 	black .

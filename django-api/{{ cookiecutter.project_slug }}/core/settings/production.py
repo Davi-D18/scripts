@@ -1,11 +1,10 @@
 from .base import BaseSettings
 from core.configs.libs.cors import CorsConfig
 {% if cookiecutter.use_authentication == "yes" %}
-from datetime import timedelta
 from core.configs.libs.jwt import JWTConfig
-
-ACESS_TOKEN_MINUTES = timedelta(minutes=50)
+from core.configs.libs.constants import JWT_TIMEOUTS
 {%- endif %}
+
 CORS_CONFIG = CorsConfig.for_production()
 
 class ProductionSettings(BaseSettings):
@@ -64,10 +63,12 @@ class ProductionSettings(BaseSettings):
         },
     }
 
-    ALLOW_ALL_ORIGINS = CORS_CONFIG["CORS_ALLOW_ALL_ORIGINS"]
-    ALLOWED_HOSTS = CORS_CONFIG["CORS_ALLOWED_HOSTS"]
-    CORS_ALLOWED_ORIGINS = CORS_CONFIG["CORS_ALLOWED_ORIGINS"]
+    # Configurações CORS
+    CORS_ALLOW_ALL_ORIGINS = CORS_CONFIG.cors_allow_all_origins
+    CORS_ALLOWED_ORIGINS = CORS_CONFIG.cors_allowed_origins
+    CORS_ALLOW_CREDENTIALS = CORS_CONFIG.cors_allow_credentials
+    ALLOWED_HOSTS = CORS_CONFIG.allowed_hosts
 
     {% if cookiecutter.use_authentication == "yes" %}
-    SIMPLE_JWT = JWTConfig(access_token=ACESS_TOKEN_MINUTES).as_dict()
+    SIMPLE_JWT = JWTConfig(access_token=JWT_TIMEOUTS['production']).as_dict()
     {%- endif %}

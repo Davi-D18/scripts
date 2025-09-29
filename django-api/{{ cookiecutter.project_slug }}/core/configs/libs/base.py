@@ -1,17 +1,18 @@
 from typing import Dict, Any
 
+
 class BaseConfig:
     def as_dict(self) -> Dict[str, Any]:
         """Converte atributos públicos em dicionário com chaves UPPER_CASE"""
         config = {}
         for key in dir(self):
-            if not key.startswith('_') and not callable(getattr(self, key)):
+            if not key.startswith("_") and not callable(getattr(self, key)):
                 value = getattr(self, key)
                 # Converte snake_case para UPPER_CASE
                 config_key = key.upper()
                 config[config_key] = value
         return config
-    
+
     def override(self, **kwargs) -> "BaseConfig":
         """Sobrescreve atributos existentes. Se o atributo atual for lista/dict,
         e o novo valor for do mesmo tipo, faz merge ao invés de substituir."""
