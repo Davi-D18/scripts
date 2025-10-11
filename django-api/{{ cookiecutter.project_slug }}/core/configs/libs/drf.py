@@ -26,5 +26,14 @@ class DRFConfig(BaseConfig):
         
         self.default_pagination_class = default_pagination or \
             "rest_framework.pagination.PageNumberPagination"
+
+        self.exception_handler = (
+            "core.configs.api.custom_exception_handler"
+        )
+
+        self.default_renderer_classes = [
+            "core.configs.api.CustomJSONRenderer",
+            'rest_framework.renderers.BrowsableAPIRenderer',
+        ]
         
         self.page_size = page_size or 20

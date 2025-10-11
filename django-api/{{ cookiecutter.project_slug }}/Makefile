@@ -1,4 +1,4 @@
-.PHONY: install-dev format lint test
+.PHONY: install-dev format lint test commit-install pre-commit update
 
 install-dev:
 	pip install -r requirements_dev.txt
@@ -12,3 +12,9 @@ lint:
 
 test:
 	pytest
+
+commit-install:
+	pre-commit install
+
+commit-upgrade:
+	pre-commit update
