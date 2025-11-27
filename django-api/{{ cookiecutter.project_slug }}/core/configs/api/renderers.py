@@ -3,19 +3,36 @@ from rest_framework.renderers import JSONRenderer
 
 class CustomJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
-        response = renderer_context.get("response", None)
+        # garantir dict para renderer_context
+        renderer_context = renderer_context or {}
+        response = renderer_context.get("response")
 
-        success = True
-        if response is not None and response.status_code >= 400:
-            success = False
+        status_code = getattr(response, "status_code", None)
 
-        response_data = {"success": success, "data": data if data is not None else {}}
+        # Quando não há conteúdo (204) retornar body vazio
+        if status_code == 204:
+            return b""
 
-        if "detail" in data:
-            response_data["detail"] = data["detail"]
-            del data["detail"]
+        success = True if (status_code is None or status_code < 400) else False
+        
+        if data is None:
+            payload = {}
+        elif isinstance(data, dict):
+            payload = data.copy()
+        else:
+            payload = {"result": data}
 
-        if "success" in data:
-            del data["success"]
+        # Extrair e remover "detail" com segurança se existir
+        detail = None
+        if isinstance(payload, dict) and "detail" in payload:
+            detail = payload.pop("detail")
+
+        # Remover possível chave "success" que possa conflitar
+        payload.pop("success", None)
+
+        response_data = {"success": success, "data": payload}
+        if detail is not None:
+            response_data["detail"] = detail
 
         return super().render(response_data, accepted_media_type, renderer_context)
+
