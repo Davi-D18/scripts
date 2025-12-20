@@ -1,4 +1,5 @@
-import os
+from decouple import config
+
 from .base import BaseConfig
 
 
@@ -11,11 +12,11 @@ class CorsConfig(BaseConfig):
         allow_credentials=True,
     ):
         self.cors_allow_all_origins = allow_all_origins
-        self.cors_allowed_origins = allowed_origins or os.getenv(
+        self.cors_allowed_origins = allowed_origins or config(
             "DJANGO_CORS_ALLOWED_ORIGINS", ""
         ).split(",")
         self.cors_allow_credentials = allow_credentials
-        self.allowed_hosts = allowed_hosts or os.getenv(
+        self.allowed_hosts = allowed_hosts or config(
             "DJANGO_ALLOWED_HOSTS", ""
         ).split(",")
 

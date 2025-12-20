@@ -1,12 +1,11 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+from decouple import config
 from core.configs.libs.drf import DRFConfig
 {%- if cookiecutter.use_documentation == "yes" %}
 from core.configs.libs.swagger import SwaggerConfig
 {%- endif %}
 
-load_dotenv()
 
 class BaseSettings:
     """
@@ -15,7 +14,7 @@ class BaseSettings:
     ENVIRONMENT_NAME = "Base"
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-    SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
+    SECRET_KEY = config('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
 
     INSTALLED_APPS = [
         'django.contrib.admin',
@@ -76,11 +75,11 @@ class BaseSettings:
         {%- if cookiecutter.banco_de_dados != "sqlite3" %}
         'production': {
             'ENGINE': 'django.db.backends.{{cookiecutter.banco_de_dados}}',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': os.getenv('DB_PORT'),
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': config('DB_PORT'),
         }
         {%- endif %}
     }
@@ -104,11 +103,11 @@ class BaseSettings:
 
     DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-    EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-    EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
-    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
-    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    EMAIL_HOST = config('EMAIL_HOST', 'smtp.gmail.com')
+    EMAIL_PORT = config('EMAIL_PORT', 587, cast=int)
+    EMAIL_USE_TLS = config('EMAIL_USE_TLS', 'True', cast=bool)
+    EMAIL_HOST_USER = config('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', '')
 
     {%- if cookiecutter.use_documentation == "yes" %}
     SPECTACULAR_SETTINGS = SwaggerConfig(

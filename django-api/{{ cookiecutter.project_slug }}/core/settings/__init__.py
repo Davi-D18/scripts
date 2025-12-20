@@ -1,9 +1,10 @@
-import os
 import sys
 from importlib import import_module
 
+from decouple import config
+
 # Determina qual ambiente carregar
-DJANGO_ENV = os.getenv("DJANGO_ENV", "development")
+DJANGO_ENV = config("DJANGO_ENV", "development")
 
 # Mapeamento de classes de configuração
 SETTINGS_MODULES = {
