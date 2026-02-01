@@ -1,0 +1,6 @@
+{
+  "project_name": "nome do projeto",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+  "banco_de_dados": ["sqlite3", "mysql", "postgresql"],
+  "use_poetry": ["yes", "no"]
+}
