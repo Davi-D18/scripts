@@ -1,3 +1,61 @@
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "",email = "seu.email@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+{%- if cookiecutter.use_poetry == "yes" %}
+dependencies = [
+    "Django (==5.2.8)",
+    "python-decouple (==3.8)",
+    "djangorestframework (==3.16.0)",
+    "django-cors-headers (==4.7.0)",
+    "gunicorn (==23.0.0)",
+    "whitenoise (==6.9.0)",
+    "django-db-logger (>=0.1.12)",
+{%- if cookiecutter.use_authentication == "yes" %}
+    "djangorestframework-simplejwt (==5.5.1)",
+{%- endif %}
+{%- if cookiecutter.use_documentation == "yes" %}
+    "drf-spectacular",
+{%- endif %}
+{%- if cookiecutter.banco_de_dados == "mysql" %}
+    "mysqlclient",
+{%- endif %}
+{%- if cookiecutter.banco_de_dados == "postgresql" %}
+    "psycopg2-binary",
+{%- endif %}
+]
+{%- endif %}
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+{%- if cookiecutter.use_poetry == "yes" %}
+[tool.poetry]
+package-mode = false
+
+[dependency-groups]
+dev = [
+    "black (>=23.0.0)",
+    "isort (>=5.12.0)",
+    "flake8 (>=6.0.0)",
+    "flake8-pyproject (>=1.2.0)",
+    "django-stubs (>=4.2.0)",
+    "pre-commit (==4.3.0)",
+{%- if cookiecutter.use_testes == "yes" %}
+    "pytest (>=7.0.0)",
+    "pytest-cov (>=4.0.0)",
+{%- endif %}
+    "django-extensions (>=3.2.0)",
+    "django-debug-toolbar (>=4.0.0)",
+]
+{%- endif %}
+
 [tool.black]
 line-length = 88
 target-version = ['py312']
@@ -13,22 +71,6 @@ profile = "black"
 multi_line_output = 3
 line_length = 88
 skip = ["migrations", "venv"]
-
-[tool.mypy]
-python_version = "3.12"
-check_untyped_defs = true
-ignore_missing_imports = true
-warn_unused_ignores = true
-warn_redundant_casts = true
-warn_unused_configs = true
-plugins = ["mypy_django_plugin.main"]
-exclude = [
-    "migrations/",
-    "venv/",
-    "build/",
-    "dist/",
-    "core/management/commands/"
-]
 
 [tool.django-stubs]
 django_settings_module = "core.settings.development"
@@ -49,8 +91,3 @@ exclude = [
     "build",
     "venv"
 ]
-
-[tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "core.settings.development"
-python_files = ["tests.py", "test_*.py", "*_tests.py"]
-addopts = "--cov=. --cov-report=html --cov-report=term-missing"

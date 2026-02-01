@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import os
+import shutil
 import subprocess
 import sys
-import shutil
 from pathlib import Path
+
+use_poetry = "{{ cookiecutter.use_poetry }}"
 
 
 def format_code_with_make(python_path):
@@ -56,42 +58,55 @@ def remove_authentication_app():
 def main():
     project_dir = Path.cwd()
     venv_dir = project_dir / 'venv'
-    requirements_file = project_dir / 'requirements_dev.txt'
+    python_path = venv_dir / 'bin' / 'python'
 
-    # Create virtual environment
-    print('\nCriando ambiente virtual...')
-    subprocess.run([sys.executable, '-m', 'venv', str(venv_dir)], check=True)
+    if use_poetry == "no":
+        requirements_file = project_dir / 'requirements_dev.txt'
+        # Create virtual environment
+        print('\nCriando ambiente virtual...')
+        subprocess.run([sys.executable, '-m', 'venv', str(venv_dir)], check=True)
 
-    # Get the correct python and pip paths
-    if os.name == 'nt':  # Windows
-        python_path = venv_dir / 'Scripts' / 'python.exe'
-        pip_path = venv_dir / 'Scripts' / 'pip.exe'
-    else:  # Unix/Linux
-        python_path = venv_dir / 'bin' / 'python'
-        pip_path = venv_dir / 'bin' / 'pip'
+        # Get the correct python and pip paths
+        if os.name == 'nt':  # Windows
+            python_path = venv_dir / 'Scripts' / 'python.exe'
 
-    print('\nInstalando dependências no ambiente virtual...')
-    subprocess.run([str(python_path), '-m', 'pip', 'install', '--upgrade', 'pip', '--no-warn-script-location'], check=True)
+        print('\nInstalando dependências no ambiente virtual...')
+        subprocess.run([str(python_path), '-m', 'pip', 'install', '--upgrade', 'pip', '--no-warn-script-location'], check=True)
     
-    subprocess.run([str(python_path), '-m', 'pip', 'install', '-r', str(requirements_file), '--no-warn-script-location'], check=True)
+        subprocess.run([str(python_path), '-m', 'pip', 'install', '-r', str(requirements_file), '--no-warn-script-location'], check=True)
     
     # Remove o app authentication se não for necessário
     remove_authentication_app()
     remove_documentation_config()
-    format_code_with_make(python_path)
 
-    mensagem = f"""
-    Setup completo!
-    Ambiente virtual criado e ativado
-    
-    Próximos passos:
-    1. cd {project_dir.name}
-    2. Olhe o arquivo README.md
-    
-    Happy Coding!     :)
-    """
+    if use_poetry == "no":
+        format_code_with_make(python_path)
+        
+        mensagem = f"""
+        Setup completo!
+        Ambiente virtual criado e ativado
+        
+        Próximos passos:
+        1. cd {project_dir.name}
+        2. Olhe o arquivo README.md
+        
+        Happy Coding!     :)
+        """
+        print(mensagem)
 
-    print(mensagem)
+    else:
+        mensagem = f"""
+        Setup completo!
+        crie o ambiente virtual e instale as dependências
+        
+        Próximos passos:
+        1. cd {project_dir.name}
+        2. Olhe o arquivo README.md
+        
+        Happy Coding!     :)
+        """
+        print(mensagem)
+
 
 if __name__ == '__main__':
     main()

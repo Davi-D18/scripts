@@ -5,4 +5,9 @@ export PYTHONUTF8=1          # ativa o UTF-8 Mode do Python ≥3.7
 export PYTHONIOENCODING=utf-8  # garante encoding UTF-8 para stdin/stdout/stderr
 
 # Repasse todos os argumentos para manage.py no modo UTF-8
+{%- if cookiecutter.use_poetry == "no" %}
 python -X utf8 manage.py "$@"  # '-X utf8' habilita o modo UTF-8
+{%- endif %}
+{%- if cookiecutter.use_poetry == "yes" %}
+poetry run python -X utf8 manage.py "$@"  # '-X utf8' habilita o modo UTF-8
+{%- endif %}

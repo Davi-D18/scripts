@@ -1,8 +1,23 @@
-.PHONY: install-dev format lint test commit-install pre-commit update
+.PHONY: format lint test commit-install pre-commit update
 
-install-dev:
-	pip install -r requirements_dev.txt
+{%- if cookiecutter.use_poetry == "yes" %}
+format:
+	poetry run black .
+	poetry run isort .
 
+lint:
+	poetry run flake8 .
+
+test:
+	poetry run pytest
+
+commit-install:
+	poetry run pre-commit install
+
+commit-upgrade:
+	poetry run pre-commit update
+{%- endif %}
+{%- if cookiecutter.use_poetry == "no" %}
 format:
 	black .
 	isort .
@@ -18,3 +33,4 @@ commit-install:
 
 commit-upgrade:
 	pre-commit update
+{%- endif %}

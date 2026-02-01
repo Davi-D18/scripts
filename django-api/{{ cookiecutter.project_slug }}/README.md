@@ -1,10 +1,19 @@
 ## 🚀 Configuração
 
+{%- if cookiecutter.use_poetry == "yes" %}
+### Ambiente de Produção
+```bash
+poetry install --without dev
+sh scripts/start.sh
+```
+{%- endif %}
+{% if cookiecutter.use_poetry == "no" %}
 ### Ambiente de Produção
 ```bash
 pip install -r requirements.txt
 sh scripts/start.sh
 ```
+{%- endif %}
 
 ### Ambiente de Desenvolvimento
 ```bash
@@ -20,18 +29,24 @@ make format    # Formatar com black + isort
 
 ### Verificação de Qualidade
 ```bash
-make lint      # Verificar com flake8 + mypy
+make lint      # Verificar com flake8
 ```
 
 ### Testes
 ```bash
 make test      # Executar testes com pytest
 ```
-
 ## 📦 Dependências
+{% if cookiecutter.use_poetry == "yes" %}
+A lista "dependencies" no `pyproject.toml` são as dependências do projeto, utilize `poetry install` para instalar.
 
+Enquanto a lista "dev" são dependências de desenvolvimento
+{%- endif %}
+
+{%- if cookiecutter.use_poetry == "no" %}
 - **requirements.txt**: Dependências de produção
 - **requirements_dev.txt**: Dependências de desenvolvimento (inclui produção)
+{%- endif %}
 
 ## 🔧 Ferramentas Configuradas
 
@@ -41,6 +56,20 @@ make test      # Executar testes com pytest
 - **Pytest**: Framework de testes
 
 
+{%- if cookiecutter.use_poetry == "yes" %}
+## 1. Configuração inicial
+
+### 1.1 Criar ambiente virtual e instalar as dependências
+Após criar o projeto com cookiecutter, crie o ambiente virtual com:
+```bash
+poetry env use python3.13 # versão python
+```
+em seguida, instale as dependências
+```bash
+poetry install
+```
+{%- endif %}
+{%- if cookiecutter.use_poetry == "no" %}
 ## 1. Configuração inicial
 
 ### 1.1 Renomear arquivo de ambiente
@@ -48,6 +77,7 @@ Após criar o projeto com cookiecutter, renomeie o arquivo de configuração:
 ```bash
 mv .env.example .env
 ```
+{%- endif %}
 
 ### 1.2 Configurar variáveis de ambiente
 Edite o arquivo `.env` e configure as seguintes variáveis:
