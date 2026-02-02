@@ -10,7 +10,7 @@ use_poetry = "{{ cookiecutter.use_poetry }}"
 
 def format_code_with_make(python_path):
     """Executa o comando 'make format' para formatar o código"""
-    print("\n🔧 Formatando código...")
+    print("\n Formatando código...")
     try:
         # Executa make format usando o Python do ambiente virtual
         subprocess.run(
@@ -21,9 +21,9 @@ def format_code_with_make(python_path):
             [str(python_path), "-m", "isort", "."],
             check=True
         )
-        print("✅ Código formatado com sucesso!")
+        print("Código formatado com sucesso!")
     except subprocess.CalledProcessError as e:
-        print(f"⚠️ Erro ao formatar código: {e}")
+        print(f"Erro ao formatar código: {e}")
         print("Execute manualmente depois: make format")
 
 def remove_documentation_config():
