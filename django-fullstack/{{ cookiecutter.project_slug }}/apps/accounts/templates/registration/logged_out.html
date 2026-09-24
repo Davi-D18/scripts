@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Sessão encerrada{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <h1>Você saiu da conta.</h1>
+    <a class="btn" href="{% url 'login' %}">Entrar novamente</a>
+  </section>
+{% endblock %}

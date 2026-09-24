@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <h1>Olá, {{ user.username }}</h1>
+    <p class="muted">E-mail: {{ user.email|default:"não informado" }}</p>
+  </section>
+{% endblock %}
