@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="{{ request.LANGUAGE_CODE|default:'pt-br' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <!-- htmx:start -->
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
+    <!-- htmx:end -->
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="{% url 'home' %}">Home</a>
+        <!-- auth:start -->
+        <nav class="auth-area">
+          {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">{{ user.username }}</a>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button class="btn" type="submit">Sair</button>
+            </form>
+          {% else %}
+            <a class="btn" href="{% url 'login' %}">Entrar</a>
+          {% endif %}
+        </nav>
+        <!-- auth:end -->
+      </div>
+    </header>
+
+    <main class="container">
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li class="message {{ message.tags }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container muted">{% block footer %}{% endblock %}</div>
+    </footer>
+    {% block extra_body %}{% endblock %}
+  </body>
+</html>

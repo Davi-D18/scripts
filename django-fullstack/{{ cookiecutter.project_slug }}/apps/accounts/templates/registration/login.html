@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar{% endblock %}
+
+{% block content %}
+  <section class="card">
+    <h1>Entrar</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn" type="submit">Entrar</button>
+    </form>
+    <p class="muted">
+      Não tem conta? <a href="{% url 'register' %}">Registre-se</a>
+    </p>
+  </section>
+{% endblock %}

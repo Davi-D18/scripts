@@ -37,6 +37,17 @@ def remove_documentation_config():
         if swagger_path.exists():
             swagger_path.unlink()
 
+def remove_test_config():
+    """
+    Remove a configuração do pytest se a opção use_testes for "no"
+    """
+    use_testes = "{{ cookiecutter.use_testes }}"
+    if use_testes == "no":
+        pytest_ini = Path.cwd() / 'pytest.ini'
+        if pytest_ini.exists():
+            pytest_ini.unlink()
+
+
 def remove_authentication_app():
     """
     Remove o app authentication se a opção use_authentication for "no"
@@ -53,6 +64,18 @@ def remove_authentication_app():
             jwt_config_path.unlink()
 
     return
+
+
+def remove_requirements_if_poetry():
+    """
+    Remove os arquivos de requirements quando o gerenciador é o Poetry
+    (as dependências ficam no pyproject.toml)
+    """
+    if use_poetry == "yes":
+        for name in ('requirements.txt', 'requirements_dev.txt'):
+            requirements_path = Path.cwd() / name
+            if requirements_path.exists():
+                requirements_path.unlink()
 
 
 def main():
@@ -72,24 +95,26 @@ def main():
 
         print('\nInstalando dependências no ambiente virtual...')
         subprocess.run([str(python_path), '-m', 'pip', 'install', '--upgrade', 'pip', '--no-warn-script-location'], check=True)
-    
+
         subprocess.run([str(python_path), '-m', 'pip', 'install', '-r', str(requirements_file), '--no-warn-script-location'], check=True)
-    
+
     # Remove o app authentication se não for necessário
     remove_authentication_app()
     remove_documentation_config()
+    remove_test_config()
+    remove_requirements_if_poetry()
 
     if use_poetry == "no":
         format_code_with_make(python_path)
-        
+
         mensagem = f"""
         Setup completo!
         Ambiente virtual criado e ativado
-        
+
         Próximos passos:
         1. cd {project_dir.name}
         2. Olhe o arquivo README.md
-        
+
         Happy Coding!     :)
         """
         print(mensagem)
@@ -98,11 +123,11 @@ def main():
         mensagem = f"""
         Setup completo!
         crie o ambiente virtual e instale as dependências
-        
+
         Próximos passos:
         1. cd {project_dir.name}
         2. Olhe o arquivo README.md
-        
+
         Happy Coding!     :)
         """
         print(mensagem)

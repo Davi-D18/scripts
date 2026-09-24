@@ -1,11 +1,12 @@
 from .base import BaseSettings
 from core.configs.libs.cors import CorsConfig
-{% if cookiecutter.use_authentication == "yes" %}
+{%- if cookiecutter.use_authentication == "yes" %}
 from core.configs.libs.jwt import JWTConfig
 from core.configs.libs.constants import JWT_TIMEOUTS
 {%- endif %}
 
 CORS_CONFIG = CorsConfig.for_production()
+
 
 class ProductionSettings(BaseSettings):
     """
@@ -22,6 +23,9 @@ class ProductionSettings(BaseSettings):
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+    # Necessário para SECURE_SSL_REDIRECT funcionar atrás de proxy (Render/Nginx)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
     # HSTS settings
     SECURE_HSTS_SECONDS = 31536000  # 1 year
@@ -69,6 +73,6 @@ class ProductionSettings(BaseSettings):
     CORS_ALLOW_CREDENTIALS = CORS_CONFIG.cors_allow_credentials
     ALLOWED_HOSTS = CORS_CONFIG.allowed_hosts
 
-    {% if cookiecutter.use_authentication == "yes" %}
+    {%- if cookiecutter.use_authentication == "yes" %}
     SIMPLE_JWT = JWTConfig(access_token=JWT_TIMEOUTS['production']).as_dict()
     {%- endif %}

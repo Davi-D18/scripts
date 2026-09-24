@@ -61,7 +61,7 @@ if username and email and password:
 else:
     print("⚠️ Variáveis de ambiente para superusuário não definidas.")'
 
-# 6. Inicia o Gunicorn na porta definida pelo Render (rodando dentro do mesmo ambiente)
-echo "🚀 Iniciando Gunicorn..."
+# 6. Inicia o Uvicorn (WSGI por padrão; use core.asgi:application para ASGI)
+echo "🚀 Iniciando Uvicorn..."
 PORT=${PORT:-8000}
-exec "${PY_CMD[@]}" -m gunicorn core.wsgi:application --bind 0.0.0.0:$PORT
+exec "${PY_CMD[@]}" -m uvicorn core.wsgi:application --interface wsgi --host 0.0.0.0 --port $PORT

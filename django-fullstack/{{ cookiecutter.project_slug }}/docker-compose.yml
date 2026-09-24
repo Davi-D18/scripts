@@ -1,0 +1,64 @@
+# O Docker Compose carrega automaticamente o arquivo `.env` do diretório do
+# projeto e usa os valores em `${VARIAVEL}` para substituição. O `env_file`
+# injeta as variáveis dentro do container, onde o Django (via python-decouple)
+# as consome.
+services:
+  web:
+    build: .
+    command: ./scripts/entrypoint.sh
+    env_file:
+      - .env
+    environment:
+      # Overrides necessários dentro da rede do compose
+      DJANGO_ENV: production
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+{%- if cookiecutter.database == "sqlite3" %}
+      DB_NAME: /data/production.db
+{%- else %}
+      DB_HOST: db
+      DB_PORT: "{{ '5432' if cookiecutter.database == 'postgresql' else '3306' }}"
+{%- endif %}
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+{%- if cookiecutter.database == "sqlite3" %}
+      - dbdata:/data
+{%- else %}
+    depends_on:
+      db:
+        condition: service_healthy
+{%- endif %}
+{% if cookiecutter.database != "sqlite3" %}
+  db:
+    image: {{ "postgres:16-alpine" if cookiecutter.database == "postgresql" else "mysql:8" }}
+    environment:
+{%- if cookiecutter.database == "postgresql" %}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+{%- else %}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+{%- endif %}
+    volumes:
+{%- if cookiecutter.database == "postgresql" %}
+      - dbdata:/var/lib/postgresql/data
+{%- else %}
+      - dbdata:/var/lib/mysql
+{%- endif %}
+    healthcheck:
+{%- if cookiecutter.database == "postgresql" %}
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+{%- else %}
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${DB_PASSWORD}"]
+{%- endif %}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+{% endif %}
+volumes:
+  media:
+  dbdata:

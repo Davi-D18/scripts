@@ -1,0 +1,11 @@
+{
+  "name": "{{ cookiecutter.project_slug }}-frontend",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./static/src/input.css -o ./static/css/main.css --minify",
+    "watch": "tailwindcss -i ./static/src/input.css -o ./static/css/main.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

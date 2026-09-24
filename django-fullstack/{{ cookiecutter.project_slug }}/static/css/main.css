@@ -1,0 +1,129 @@
+/*
+ * Fallback CSS (sem Tailwind).
+ *
+ * Quando use_tailwind=yes, `npm run build` sobrescreve este arquivo com o CSS
+ * gerado a partir de static/src/input.css. Quando use_tailwind=no, este
+ * arquivo é o CSS real da aplicação.
+ *
+ * As classes abaixo são as mesmas usadas em core/templates/base.html.
+ */
+:root {
+  --brand: #4f46e5;
+  --brand-dark: #4338ca;
+  --border: #e2e8f0;
+  --muted: #64748b;
+  --bg: #f8fafc;
+  --text: #1e293b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  margin-top: 3rem;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+}
+
+.brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.auth-area {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0.375rem;
+  background: var(--brand);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--brand-dark);
+}
+
+.card {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.form-control {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.message {
+  background: #f1f5f9;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.errorlist {
+  list-style: none;
+  padding: 0;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+main.container {
+  padding-top: 1rem;
+}
