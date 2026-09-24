@@ -7,6 +7,7 @@ from core.configs.libs.constants import JWT_TIMEOUTS
 
 CORS_CONFIG = CorsConfig.for_development()
 
+
 class DevelopmentSettings(BaseSettings):
     """
     Configurações de desenvolvimento.
@@ -16,6 +17,15 @@ class DevelopmentSettings(BaseSettings):
     DEBUG = True
 
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+    # Renderers: inclui a UI navegável apenas em desenvolvimento
+    REST_FRAMEWORK = {
+        **BaseSettings.REST_FRAMEWORK,
+        'DEFAULT_RENDERER_CLASSES': [
+            *BaseSettings.REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'],
+            'rest_framework.renderers.BrowsableAPIRenderer',
+        ],
+    }
 
     {%- if cookiecutter.use_authentication == "yes" %}
     SIMPLE_JWT = JWTConfig(access_token=JWT_TIMEOUTS['development']).as_dict()

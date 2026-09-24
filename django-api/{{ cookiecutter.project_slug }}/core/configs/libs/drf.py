@@ -33,7 +33,6 @@ class DRFConfig(BaseConfig):
 
         self.default_renderer_classes = [
             "core.configs.api.CustomJSONRenderer",
-            'rest_framework.renderers.BrowsableAPIRenderer',
         ]
         
         self.page_size = page_size or 20

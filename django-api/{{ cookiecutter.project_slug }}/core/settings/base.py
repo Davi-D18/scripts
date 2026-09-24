@@ -33,6 +33,9 @@ class BaseSettings:
         'corsheaders',
         'core',
         'django_db_logger',
+        {%- if cookiecutter.use_authentication == "yes" %}
+        'apps.authentication',
+        {%- endif %}
     ]
 
     MIDDLEWARE = [
@@ -72,7 +75,12 @@ class BaseSettings:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': 'database.db'
         },
-        {%- if cookiecutter.banco_de_dados != "sqlite3" %}
+        {%- if cookiecutter.banco_de_dados == "sqlite3" %}
+        'production': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'production.db',
+        },
+        {%- else %}
         'production': {
             'ENGINE': 'django.db.backends.{{cookiecutter.banco_de_dados}}',
             'NAME': config('DB_NAME'),
@@ -80,7 +88,7 @@ class BaseSettings:
             'PASSWORD': config('DB_PASSWORD'),
             'HOST': config('DB_HOST'),
             'PORT': config('DB_PORT'),
-        }
+        },
         {%- endif %}
     }
 
@@ -95,6 +103,7 @@ class BaseSettings:
 
     STATIC_URL = '/static/'
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATICFILES_DIRS = [BASE_DIR / 'static']
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -134,11 +143,9 @@ class BaseSettings:
     def print_environment_info(self):
         """Exibe informações do ambiente no console"""
         print("\n" + "=" * 30)
+        print(f"⚙️  Ambiente: {self.ENVIRONMENT_NAME}")
 
-        if self.ENVIRONMENT_NAME.upper() == "PRODUCTION":
-            print(f"⚙️  Ambiente: {self.ENVIRONMENT_NAME}")
-        else:
-            print(f"⚙️  Ambiente: {self.ENVIRONMENT_NAME}")
+        if self.ENVIRONMENT_NAME.upper() != "PRODUCTION":
             print(f"🔧 DEBUG: {getattr(self, 'DEBUG', 'Não definido')}")
             print(
                 f"🗄️  Database: {self.DATABASES['default']['ENGINE'].split('.')[-1].title()}"

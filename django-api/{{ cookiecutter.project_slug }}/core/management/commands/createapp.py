@@ -45,12 +45,12 @@ class Command(BaseCommand):
         try:
             self._create_directories(app_dir)
             self._move_default_files(app_dir, plural)
-            self._create_scaffold_files(app_dir, singular, plural)
+            self._create_scaffold_files(app_dir, app_name, singular, plural)
             self._update_apps_py(app_dir, app_name)
             self._create_readme(app_dir, app_name)
-            self._create_urls_py(app_dir, plural)
+            self._create_urls_py(app_dir, app_name, plural)
             self._print_success(app_name, resource)
-            self._modify_controllers(app_dir, singular, plural)
+            self._modify_controllers(app_dir, app_name, singular, plural)
             self._modify_models(app_dir, plural, singular)
         except Exception as e:
             shutil.rmtree(app_dir, ignore_errors=True)
@@ -83,13 +83,13 @@ class Command(BaseCommand):
                 os.makedirs(os.path.dirname(dst_path), exist_ok=True)
                 shutil.move(src_path, dst_path)
 
-    def _create_scaffold_files(self, base_dir, singular, plural):
+    def _create_scaffold_files(self, base_dir, app_name, singular, plural):
         templates = {
             os.path.join("schemas", f"{singular}_schema.py"): self._template_schema(
-                singular, plural
+                app_name, singular, plural
             ),
             os.path.join("routes", f"{plural}_routes.py"): self._template_routes(
-                plural, singular
+                app_name, plural, singular
             ),
         }
         for rel_path, content in templates.items():
@@ -104,6 +104,7 @@ class Command(BaseCommand):
         with open(apps_file, "r") as f:
             content = f.read()
         content = content.replace(f'name = "{app_name}"', f'name = "apps.{app_name}"')
+        content = content.replace(f"name = '{app_name}'", f"name = 'apps.{app_name}'")
         with open(apps_file, "w") as f:
             f.write(content)
 
@@ -139,12 +140,12 @@ python manage.py test apps.{app_name}.tests.controllers
         with open(os.path.join(base_dir, "README.md"), "w") as f:
             f.write(content)
 
-    def _create_urls_py(self, base_dir, plural):
+    def _create_urls_py(self, base_dir, app_name, plural):
         content = f"""from django.urls import path, include
 
 
 urlpatterns = [
-    path('', include('apps.{plural}.routes.{plural}_routes')),
+    path('', include('apps.{app_name}.routes.{plural}_routes')),
 ]
 """
         with open(os.path.join(base_dir, "urls.py"), "w") as f:
@@ -157,27 +158,27 @@ urlpatterns = [
         )
         self.stdout.write(self.style.SUCCESS(msg))
 
-    def _template_schema(self, singular, plural):
+    def _template_schema(self, app_name, singular, plural):
         class_name = singular.capitalize()
         return f"""
 from rest_framework import serializers
-from apps.{plural}.models.{plural} import {singular.capitalize()}
+from apps.{app_name}.models.{plural} import {class_name}
 
 
 class {class_name}Serializer(serializers.ModelSerializer):
     class Meta:
-        model = {singular.capitalize()}
+        model = {class_name}
         fields = '__all__'
 
 """
 
-    def _template_routes(self, plural, singular):
+    def _template_routes(self, app_name, plural, singular):
         class_name = singular.capitalize()
         return "\n".join(
             [
                 "from django.urls import path, include",
                 "from rest_framework.routers import DefaultRouter",
-                f"from apps.{plural}.controllers.{plural}_controller import {class_name}ViewSet",
+                f"from apps.{app_name}.controllers.{plural}_controller import {class_name}ViewSet",
                 "",
                 "",
                 "router = DefaultRouter()",
@@ -189,19 +190,19 @@ class {class_name}Serializer(serializers.ModelSerializer):
             ]
         )
 
-    def _modify_controllers(self, base_dir, singular, plural):
+    def _modify_controllers(self, base_dir, app_name, singular, plural):
         controllers_dir = os.path.join(base_dir, "controllers")
         class_name = singular.capitalize()
 
         content = f"""from rest_framework.viewsets import ModelViewSet
 
-from apps.{plural}.schemas.{singular}_schema import {class_name}Serializer
-from apps.{plural}.models.{plural} import {singular.capitalize()}
+from apps.{app_name}.schemas.{singular}_schema import {class_name}Serializer
+from apps.{app_name}.models.{plural} import {class_name}
 
 
-class {singular.capitalize()}ViewSet(ModelViewSet):
-    queryset = {singular.capitalize()}.objects.all()
-    serializer_class = {singular.capitalize()}Serializer
+class {class_name}ViewSet(ModelViewSet):
+    queryset = {class_name}.objects.all()
+    serializer_class = {class_name}Serializer
     
 """
 
@@ -221,11 +222,11 @@ class {class_name}(models.Model):
     # adicione aqui os demais campos
 
     class Meta:
-        ordering = ['name']
-        verbose_name = '' # nome da tabela no banco
+        verbose_name = '{singular}'
+        verbose_name_plural = '{plural}'
 
     def __str__(self):
-        return self.name
+        return f"{{self.__class__.__name__}} #{{self.pk}}"
 """
 
         for filename in os.listdir(models_dir):
@@ -233,3 +234,9 @@ class {class_name}(models.Model):
                 file_path = os.path.join(models_dir, filename)
                 with open(file_path, "a") as f:
                     f.write(content)
+
+        # Exporta o modelo em models/__init__.py para permitir
+        # "from apps.<app>.models import <Model>" (usado pelos seeders)
+        init_file = os.path.join(models_dir, "__init__.py")
+        with open(init_file, "a") as f:
+            f.write(f"from .{plural} import {class_name}\n")
