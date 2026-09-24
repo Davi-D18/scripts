@@ -1,4 +1,4 @@
-Django==5.2.11
+Django==5.2.16
 python-decouple==3.8
 uvicorn[standard]==0.30.6
 whitenoise==6.9.0
