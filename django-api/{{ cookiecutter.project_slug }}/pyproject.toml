@@ -11,11 +11,11 @@ requires-python = ">=3.12,<4.0"
 dependencies = [
     "Django (==5.2.8)",
     "python-decouple (==3.8)",
-    "djangorestframework (==3.16.0)",
-    "django-cors-headers (==4.7.0)",
-    "gunicorn (==23.0.0)",
+    "uvicorn[standard] (==0.30.6)",
     "whitenoise (==6.9.0)",
     "django-db-logger (>=0.1.12)",
+    "djangorestframework (==3.16.0)",
+    "django-cors-headers (==4.7.0)",
 {%- if cookiecutter.use_authentication == "yes" %}
     "djangorestframework-simplejwt (==5.5.1)",
 {%- endif %}
@@ -49,6 +49,7 @@ dev = [
     "pre-commit (==4.3.0)",
 {%- if cookiecutter.use_testes == "yes" %}
     "pytest (>=7.0.0)",
+    "pytest-django (>=4.5.0)",
     "pytest-cov (>=4.0.0)",
 {%- endif %}
     "django-extensions (>=3.2.0)",
