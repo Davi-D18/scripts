@@ -1,71 +1,65 @@
-# Authentication App
+# Authentication App (API)
 
-Este app implementa um sistema de autenticação baseado em JWT (JSON Web Tokens)
+Este app implementa autenticação baseada em JWT (JSON Web Tokens) com Django REST Framework + SimpleJWT.
 
 ## O que faz
 
-- **Registro de usuários**: Permite criar novas contas
-- **Autenticação JWT**: Login com username/email e senha
-- **Renovação de tokens**: Sistema seguro para manter sessões ativas
+- **Registro de usuários**: cria novas contas
+- **Autenticação JWT**: login com username **ou** email + senha
+- **Renovação de tokens**: renova o access token
+
+## Estrutura
+
+Este app usa arquivos únicos (diferente do scaffold gerado por `createapp`, que organiza em pastas por recurso):
+
+- `schemas.py`: `UserSerializer` (registro) e `CustomerTokenObtainPairSerializer` (login por username/email)
+- `controllers.py`: `RegisterView` e `CustomTokenObtainPairView`
+- `urls.py`: rotas registradas em `/api/v1/auth/`
 
 ## Endpoints da API
 
-- `POST /register/`: Registra novo usuário
-- `POST /login/`: Autentica e retorna tokens JWT
-- `POST /login/refresh/`: Renova token de acesso expirado
+- `POST /api/v1/auth/register/`: registra novo usuário
+- `POST /api/v1/auth/login/`: autentica e retorna os tokens JWT
+- `POST /api/v1/auth/login/refresh/`: renova o access token
 
 ## Personalizações comuns
 
 ### Adicionar campos ao usuário
 
-Edite `models/auths.py` para estender o modelo de usuário:
+O app usa o modelo de usuário padrão do Django. Para estender, crie um `models.py` neste app com um `AbstractUser` e aponte `AUTH_USER_MODEL` em `core/settings/base.py`:
 
 ```python
+# apps/authentication/models.py
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 
 class User(AbstractUser):
-    # Adicione campos personalizados
     telefone = models.CharField(max_length=15, blank=True)
-    data_nascimento = models.DateField(null=True, blank=True)
 ```
 
-Atualize `schemas/auth_schema.py` para incluir os novos campos:
-
 ```python
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'password', 'telefone', 'data_nascimento']
-        extra_kwargs = {'password': {'write_only': True}}
+# core/settings/base.py
+AUTH_USER_MODEL = "authentication.User"
 ```
 
-### Personalizar payload do token JWT
+Depois inclua os novos campos em `UserSerializer`, dentro de `schemas.py`.
 
-Edite `schemas/auth_schema.py` para modificar o payload do token:
+### Personalizar o payload do token JWT
+
+Edite `schemas.py`:
 
 ```python
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomerTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        
-        # Adicione claims personalizadas
-        token['name'] = user.get_full_name()
-        token['email'] = user.email
-        token['is_staff'] = user.is_staff
-        
+        token["name"] = user.get_full_name()
+        token["email"] = user.email
+        token["is_staff"] = user.is_staff
         return token
 ```
 
-### Alterar tempo de expiração dos tokens
+### Alterar o tempo de expiração dos tokens
 
-Edite as configurações em `core/settings/base.py`:
-
-```python
-from datetime import timedelta
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Padrão: 15 minutos
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Padrão: 1 dia
-}
-```
+Os tempos ficam em `core/configs/libs/constants.py` (`JWT_TIMEOUTS`) e são aplicados via `JWTConfig` em `core/settings/development.py` e `core/settings/production.py`.
