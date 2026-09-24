@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+.venv/
+venv/
+
+# Django
+*.log
+database.db
+production.db
+media/
+staticfiles/
+.local
+
+# Environment
+.env
+
+# Node / Tailwind
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp

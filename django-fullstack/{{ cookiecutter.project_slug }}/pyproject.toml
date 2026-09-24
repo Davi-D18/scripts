@@ -1,0 +1,55 @@
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.description }}"
+authors = [
+    { name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}" },
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+{%- if cookiecutter.dependency_manager == "poetry" %}
+dependencies = [
+    "Django (>=5.2,<6.0)",
+    "python-decouple (>=3.8)",
+    "uvicorn[standard] (>=0.30.0)",
+    "whitenoise (>=6.9.0)",
+    "django-db-logger (>=0.1.12)",
+{%- if cookiecutter.database == "postgresql" %}
+    "psycopg[binary] (>=3.2)",
+{%- elif cookiecutter.database == "mysql" %}
+    "mysqlclient (>=2.2)",
+{%- endif %}
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+[dependency-groups]
+dev = [
+    "ruff (>=0.9.0)",
+    "django-extensions (>=3.2.0)",
+    "django-debug-toolbar (>=4.0.0)",
+    "pre-commit (>=4.0.0)",
+{%- if cookiecutter.use_tests == "yes" %}
+    "pytest (>=8.0.0)",
+    "pytest-django (>=4.5.0)",
+    "pytest-cov (>=4.0.0)",
+{%- endif %}
+]
+{%- endif %}
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = ["migrations", ".venv", "venv", "staticfiles", "node_modules", "static/css"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "DJ", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
